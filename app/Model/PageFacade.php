@@ -102,4 +102,24 @@ public function getGroupedCoursePrices(): array
     }
     return $grouped;
 }
+
+public function updateHeroSection(int $id, array $values): void
+{
+    $this->database->table('hero_section')->get($id)->update($values);
+}
+
+public function updateAboutSection(int $id, array $values): void
+{
+    $this->database->table('about_section')->get($id)->update($values);
+}
+
+public function updateContactInfo(int $id, array $values): void
+{
+    $this->database->table('contact_info')->get($id)->update($values);
+}
+
+public function updateAdvantage(int $id, array $values): void
+{
+    $this->database->table('advantages')->get($id)->update($values);
+}
 }

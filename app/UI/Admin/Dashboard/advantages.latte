@@ -1,0 +1,37 @@
+{block content}
+  <h1>Výhody</h1>
+  {if isset($advantage)}
+    <!-- Edit Mode: Display the edit form for a single advantage -->
+    <h2>Edit Advantage</h2>
+    {control advantageForm}
+    <p>
+      <a href="{link default}">← Zpět na seznam výhod</a>
+    </p>
+  {else}
+    <!-- List Mode: Display all advantages -->
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Icon</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Ordering</th>
+          <th>Edit</th>
+        </tr>
+      </thead>
+      <tbody>
+        {foreach $advantages as $adv}
+          <tr>
+            <td><i class="{$adv->icon}"></i></td>
+            <td>{$adv->title}</td>
+            <td>{$adv->description}</td>
+            <td>{$adv->ordering}</td>
+            <td>
+              <a href="{link default, id => $adv->id}">Edit</a>
+            </td>
+          </tr>
+        {/foreach}
+      </tbody>
+    </table>
+  {/if}
+{/block}
