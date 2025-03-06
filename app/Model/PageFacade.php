@@ -122,4 +122,20 @@ public function updateAdvantage(int $id, array $values): void
 {
     $this->database->table('advantages')->get($id)->update($values);
 }
+
+public function updatePrice(int $id, array $values): void
+{
+    $this->database->table('course_prices')->get($id)->update($values);
+}
+
+public function getPriceById(int $id)
+{
+    return $this->database->table('course_prices')->get($id);
+}
+
+public function updateCourse(int $id, array $values): void
+{
+    $this->database->table('courses')->get($id)->update($values);
+
+}
 }

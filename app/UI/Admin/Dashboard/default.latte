@@ -1,39 +1,16 @@
 {block content}
 <link rel="stylesheet" href="/css/dash.css">
-<h1>Dashboard</h1>
-
-<section>
-  <h2>Hero Section</h2>
-  {include hero.latte}
-</section>
-
-<section>
-  <h2>About Section</h2>
-  {include about.latte}
-</section>
-
-<section>
-  <h2>Contact Section</h2>
-  {include contact.latte}
-</section>
-
-<section>
-  <h2>Advantages</h2>
-  {include advantages.latte}
-</section>
-
-<section>
-  <h2>Offerings</h2>
-  {include offerings.latte}
-</section>
-
-<section>
-  <h2>Ceník</h2>
-  <!-- You may include a separate template for course prices if desired -->
-</section>
-
-<section>
-  <h2>Courses</h2>
-  <!-- List courses if needed -->
-</section>
+<div class="dashboard-container">
+  <h1>Admin Dashboard</h1>
+  <p>Select a section to edit:</p>
+  <div class="dashboard-menu">
+    <a href="{link Dashboard:hero}" class="btn btn-primary">Upravit Baner</a>
+    <a href="{link Dashboard:about}" class="btn btn-primary">Upravit O nás</a>
+    <a href="{link Dashboard:contact}" class="btn btn-primary">Upravit Kontakty</a>
+    <a href="{link Dashboard:advantages}" class="btn btn-primary">Upravit Výhody</a>
+    <a href="{link Dashboard:offerings}" class="btn btn-primary">Upravit Nabídky</a>
+    <a href="{link Dashboard:prices}" class="btn btn-primary">Upravit Ceník</a>
+    <a href="{link Dashboard:courses}" class="btn btn-primary">Upravit Kurzy</a>
+  </div>
+</div>
 {/block}
