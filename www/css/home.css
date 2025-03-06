@@ -179,3 +179,11 @@
   padding: 0.75rem;
 }
 
+/* Add a light gray line between sections */
+section:not(:first-of-type) {
+  border-top: 1px solid #ddd;
+  margin-top: 2rem;
+  padding-top: 2rem;
+}
+
+

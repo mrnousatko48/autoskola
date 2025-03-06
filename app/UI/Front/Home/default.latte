@@ -18,178 +18,164 @@
   <!-- Hero Section -->
   <header class="hero">
     <div class="container">
-      <h1 class="display-4">Vítejte v Autoškole Prima</h1>
-      <p class="lead">Kvalitní výuka od zkušených instruktorů v Teplicích a Bílině.</p>
-      <a href="{link CourseList}" class="btn btn-primary btn-lg">Zjistit více o kurzech</a>
+      <h1 class="display-4">{$hero->heading}</h1>
+      <p class="lead">{$hero->subheading}</p>
+      <a href="{$hero->button_link}" class="btn btn-primary btn-lg">{$hero->button_text}</a>
     </div>
   </header>
 
   <!-- O nás Section -->
   <section id="about" class="about-us py-5">
     <div class="container">
-      <h2 class="text-center mb-4">O nás</h2>
+      <h2 class="text-center mb-4">{$about->heading}</h2>
       <div class="row align-items-center">
         <div class="col-md-6">
-          <img src="/images/about-us.jpg" alt="Autoškola Prima" class="img-fluid rounded" loading="lazy">
+          <img src="{$about->image}" alt="{$about->alt_text}" class="img-fluid rounded" loading="lazy">
         </div>
         <div class="col-md-6">
-          <p>Autoškola Prima nabízí kvalitní výuku a přípravu na získání řidičského oprávnění pro různé skupiny. S působností v Teplicích a Bílině klademe důraz na individuální přístup, profesionalitu a flexibilitu, aby každý žák uspěl.</p>
+          <p>{$about->content}</p>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- Add a light gray separator between sections -->
+  <hr class="my-5" style="border-color: #ddd;">
 
   <!-- Výhody Section -->
-  <section class="features bg-light py-5">
+  <section class="features py-5">
     <div class="container">
-      <h2 class="text-center mb-5">Proč si vybrat nás?</h2>
-      <div class="row text-center">
-        <div class="col-md-4 mb-4">
-          <div class="feature-card">
-            <i class="fas fa-chalkboard-teacher fa-3x mb-3"></i>
-            <h3>Zkušení instruktoři</h3>
-            <p>Náš tým tvoří profesionálové s dlouholetou praxí.</p>
+      <h2 class="text-center mb-5">Výhody</h2>
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {foreach $advantages as $adv}
+          <div class="col {if $adv->ordering == 7}mx-auto{/if}">
+            <div class="card h-100 border-0 text-center">
+              <div class="card-body">
+                <i class="{$adv->icon} fa-3x mb-3 text-primary"></i>
+                <h5 class="card-title">{$adv->title}</h5>
+                <p class="card-text">{$adv->description}</p>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="col-md-4 mb-4">
-          <div class="feature-card">
-            <i class="fas fa-clock fa-3x mb-3"></i>
-            <h3>Flexibilní rozvrh</h3>
-            <p>Přizpůsobíme výuku vašemu času a potřebám.</p>
-          </div>
-        </div>
-        <div class="col-md-4 mb-4">
-          <div class="feature-card">
-            <i class="fas fa-car fa-3x mb-3"></i>
-            <h3>Moderní vozový park</h3>
-            <p>Učíme na nových a spolehlivých vozidlech.</p>
-          </div>
+        {/foreach}
+      </div>
+    </div>
+  </section>
+
+  <hr class="my-5" style="border-color: #ddd;">
+
+  <!-- Nabízíme Section -->
+  <section id="nabizime" class="nabizime py-5">
+    <div class="container">
+      <div class="row justify-content-center text-center mb-5">
+        <div class="col-lg-10">
+          <h2 class="mb-4">Nabízíme</h2>
+          <p class="lead">Výcvik a výuku k získání řidičského oprávnění skupiny B, které opravňuje k řízení:</p>
+          <ul class="list-group list-group-flush text-start">
+            {foreach $offerings as $offer}
+              <li class="list-group-item">
+                <strong>{$offer->label}</strong> {$offer->content}
+              </li>
+            {/foreach}
+          </ul>
+          <p class="mt-4"><em>Věková hranice 18 let.</em></p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Nabízíme Section -->
-<section id="nabizime" class="nabizime py-5">
-  <div class="container">
-    <div class="row justify-content-center text-center mb-5">
-      <div class="col-lg-10">
-        <h2 class="mb-4">Nabízíme</h2>
-        <p class="lead">
-          Výcvik a výuku k získání řidičského oprávnění skupiny B, které opravňuje k řízení:
-        </p>
-        <ul class="list-group list-group-flush text-start">
-          <li class="list-group-item">
-            <strong>a)</strong> motorových vozidel (s výjimkou všech motocyklů), jejichž maximální přípustná hmotnost nepřevyšuje 3500 kg a s nejvýše 8 místy k sezení, kromě místa řidiče, k tomuto motorovému vozidlu smí být připojeno přípojné vozidlo o maximální přípustné hmotnosti nepřevyšující 750 kg.
-          </li>
-          <li class="list-group-item">
-            <strong>b)</strong> traktorů a pracovních strojů samojízdných, jejichž maximální přípustná hmotnost nepřevyšuje 3500 kg.
-          </li>
-          <li class="list-group-item">
-            <strong>c)</strong> jízdních souprav složených z motorového vozidla podle písm. a) nebo b) a přípojného vozidla, pokud maximální přípustná hmotnost soupravy nepřevyšuje 3500 kg a maximální přípustná hmotnost přípojného vozidla nepřevyšuje pohotovostní hmotnost motorového vozidla.
-          </li>
-        </ul>
-        <p class="mt-4"><em>Věková hranice 18 let.</em></p>
-      </div>
-    </div>
-  </div>
-</section>
+  <hr class="my-5" style="border-color: #ddd;">
 
-<!-- Ceník kurzu Section (minimized and modified) -->
-<section id="cenik" class="cenik py-5">
-  <div class="container">
-    <h2 class="mb-3 text-center">Ceník kurzu skupiny B</h2>
-    {var $headers = [
-      'public'       => 'Cena pro veřejnost a studenty',
-      'card'         => 'Platba kartou',
-      'installments' => 'Splátky',
-      'other'        => 'Ostatní poplatky'
-    ]}
-    {var $order = ['public', 'card', 'installments', 'other']}
-    {foreach $order as $section}
-      {if isset($groupedPrices[$section])}
-        <h4 class="mt-4">{$headers[$section]}</h4>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Položka</th>
-              <th>Cena</th>
-            </tr>
-          </thead>
-          <tbody>
-            {foreach $groupedPrices[$section] as $price}
+  <!-- Ceník kurzu Section (existing dynamic implementation) -->
+  <section id="cenik" class="cenik py-5">
+    <div class="container">
+      <h2 class="mb-3 text-center">Ceník kurzu skupiny B</h2>
+      {var $headers = [
+        'public'       => 'Cena pro veřejnost a studenty',
+        'card'         => 'Platba kartou',
+        'installments' => 'Splátky',
+        'other'        => 'Ostatní poplatky'
+      ]}
+      {var $order = ['public', 'card', 'installments', 'other']}
+      {foreach $order as $section}
+        {if isset($groupedPrices[$section])}
+          <h4 class="mt-4">{$headers[$section]}</h4>
+          <table class="table table-bordered">
+            <thead>
               <tr>
-                <td>{$price->item}</td>
-                <td>{$price->price}</td>
+                <th>Položka</th>
+                <th>Cena</th>
               </tr>
-            {/foreach}
-          </tbody>
-        </table>
-        {if isset($groupedPrices[$section][0]->description) && $groupedPrices[$section][0]->description != ''}
-          <p class="mb-4"><em>{$groupedPrices[$section][0]->description}</em></p>
+            </thead>
+            <tbody>
+              {foreach $groupedPrices[$section] as $price}
+                <tr>
+                  <td>{$price->item}</td>
+                  <td>{$price->price}</td>
+                </tr>
+              {/foreach}
+            </tbody>
+          </table>
+          {if isset($groupedPrices[$section][0]->description) && $groupedPrices[$section][0]->description != ''}
+            <p class="mb-4"><em>{$groupedPrices[$section][0]->description}</em></p>
+          {/if}
         {/if}
-      {/if}
-    {/foreach}
-  </div>
-</section>
-
-
-
-
-
-<!-- Kurzy Section -->
-<section id="courses" class="courses py-5">
-  <div class="container">
-    <h2 class="text-center mb-5">Naše kurzy</h2>
-    <div class="row justify-content-center">
-      {foreach $courses as $course}
-        <div class="col-md-4 mb-4">
-          <div class="card h-100">
-            <img src="{$course->image}" class="card-img-top" alt="{$course->name}" loading="lazy">
-            <div class="card-body">
-              <h5 class="card-title">{$course->name}</h5>
-              <p class="card-text">{$course->description}</p>
-              <a href="{link CourseDetail, id => $course->id}" class="btn btn-primary">Zjistit více</a>
-            </div>
-          </div>
-        </div>
       {/foreach}
     </div>
-  </div>
-</section>
+  </section>
 
+  <hr class="my-5" style="border-color: #ddd;">
 
-<!-- Kontakt Section -->
-<section id="contact" class="contact bg-light py-5">
-  <div class="container">
-    <div class="row justify-content-center text-center mb-5">
-      <div class="col-lg-8">
-        <h2 class="mb-3">Kontakt</h2>
-        <p class="lead">Máte otázky? Neváhejte nás kontaktovat.</p>
+  <!-- Kurzy Section (already dynamic) -->
+  <section id="courses" class="courses py-5">
+    <div class="container">
+      <h2 class="text-center mb-5">Naše kurzy</h2>
+      <div class="row justify-content-center">
+        {foreach $courses as $course}
+          <div class="col-md-4 mb-4">
+            <div class="card h-100">
+              <img src="{$course->image}" class="card-img-top" alt="{$course->name}" loading="lazy">
+              <div class="card-body">
+                <h5 class="card-title">{$course->name}</h5>
+                <p class="card-text">{$course->description}</p>
+                <a href="{link 'CourseDetail', id => $course->id}" class="btn btn-primary">Zjistit více</a>
+              </div>
+            </div>
+          </div>
+        {/foreach}
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-6 mb-4 mb-md-0">
-        <div class="contact-info p-4 bg-white shadow-sm rounded">
-          <p><strong>Martin Tkadlec</strong></p>
-          <p><i class="fas fa-map-marker-alt me-2"></i><strong>Adresa:</strong> Sukova třída 1556, 530 02 Pardubice</p>
-          <p><strong>IČO:</strong> 60919264</p>
-          <p><i class="fas fa-mobile-alt me-2"></i><strong>Mobil:</strong> <a href="tel:+737314477">737 314 477</a></p>
-          <p><i class="fas fa-envelope me-2"></i><strong>Email:</strong> <a href="mailto:autoskolaprima@email.cz">
-          autoskolaprima@email.cz</a></p>
+  </section>
+
+  <hr class="my-5" style="border-color: #ddd;">
+
+  <!-- Kontakt Section -->
+  <section id="contact" class="contact bg-light py-5">
+    <div class="container">
+      <div class="row justify-content-center text-center mb-5">
+        <div class="col-lg-8">
+          <h2 class="mb-3">Kontakt</h2>
+          <p class="lead">Máte otázky? Neváhejte nás kontaktovat.</p>
         </div>
       </div>
-      <div class="col-md-6">
-        <div class="map-wrapper shadow-sm rounded">
-          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2562.5754126069282!2d15.764816093396476!3d50.03805129807359!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470dcc954aa1d77b%3A0x2e9085f0ca47909d!2sAuto%C5%A1kola%20Pardubice%20-%20PRIMA!5e0!3m2!1scs!2scz!4v1741201095578!5m2!1scs!2scz" 
-                  allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" 
-                  class="w-100" style="min-height:300px; border:0; border-radius:8px;"></iframe>
+      <div class="row">
+        <div class="col-md-6 mb-4 mb-md-0">
+          <div class="contact-info p-4 bg-white shadow-sm rounded">
+            <p><strong>{$contact->name}</strong></p>
+            <p><i class="fas fa-map-marker-alt me-2"></i><strong>Adresa:</strong> {$contact->address}</p>
+            <p><strong>IČO:</strong> {$contact->ico}</p>
+            <p><i class="fas fa-mobile-alt me-2"></i><strong>Mobil:</strong> <a href="tel:+{$contact->phone|replace: ' ', ''}">{$contact->phone}</a></p>
+            <p><i class="fas fa-envelope me-2"></i><strong>Email:</strong> <a href="mailto:{$contact->email}">{$contact->email}</a></p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="map-wrapper shadow-sm rounded">
+            {$contact->map_embed|noescape}
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
-
+  </section>
 
   <!-- Bootstrap JS (deferred for performance) -->
   <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>

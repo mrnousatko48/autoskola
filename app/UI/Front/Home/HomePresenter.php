@@ -1,32 +1,50 @@
 <?php
-// filepath: /root/autoskola/app/UI/Front/Home/HomePresenter.php
-
 declare(strict_types=1);
 
 namespace App\UI\Front\Home;
 
 use Nette;
-use App\Model\CourseFacade;
+use App\Model\PageFacade;
 
 final class HomePresenter extends Nette\Application\UI\Presenter
 {
-    private CourseFacade $courseFacade;
+    /** @var PageFacade */
+    private PageFacade $pageFacade;
 
-    public function __construct(CourseFacade $courseFacade)
+    /**
+     * Constructor.
+     *
+     * @param PageFacade $pageFacade Central facade for retrieving page content from multiple tables.
+     */
+    public function __construct(PageFacade $pageFacade)
     {
         parent::__construct();
-        $this->courseFacade = $courseFacade;
+        $this->pageFacade = $pageFacade;
     }
 
+    /**
+     * Render the default homepage.
+     *
+     * Loads the hero, about, advantages, offerings, contact, course prices, and courses data.
+     */
     public function renderDefault(): void
     {
-        $this->template->courses = $this->courseFacade->getAllCourses();
-        $this->template->groupedPrices = $this->courseFacade->getGroupedCoursePrices();
+
+        $this->template->hero = $this->pageFacade->getHeroSection();
+        $this->template->about = $this->pageFacade->getAboutSection();
+        $this->template->advantages = $this->pageFacade->getAdvantages();
+        $this->template->offerings = $this->pageFacade->getOfferings();
+        $this->template->contact = $this->pageFacade->getContactInfo();
+        $this->template->groupedPrices = $this->pageFacade->getGroupedCoursePrices();
+        $this->template->courses = $this->pageFacade->getAllCourses();
     }
 
-    // If you need a separate action for "cenik", you can fix its typo:
+    /**
+     * Render the course pricing ("Ceník") page.
+     */
     public function renderCenik(): void
     {
-        $this->template->groupedPrices = $this->courseFacade->getGroupedCoursePrices();
+        // Only the grouped course prices are needed here.
+        $this->template->groupedPrices = $this->pageFacade->getGroupedCoursePrices();
     }
 }
