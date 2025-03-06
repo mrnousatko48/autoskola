@@ -1,0 +1,30 @@
+/* Navbar */
+.navbar {
+    background-color: #002244;
+    transition: background-color 0.3s ease;
+  }
+  
+  .navbar-nav .nav-link {
+    color: white;
+  }
+  
+  .navbar-nav .nav-link:hover {
+    color: #ffcc00;
+  }
+  
+  /* Footer */
+  .footer {
+    background-color: #f8f9fa;
+  }
+  
+  .footer a {
+    color: #002244;
+    font-size: 1.5rem;
+    margin-right: 15px;
+    transition: color 0.3s ease;
+  }
+  
+  .footer a:hover {
+    color: #ffcc00;
+  }
+  
