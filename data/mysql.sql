@@ -34,12 +34,12 @@ CREATE TABLE `advantages` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `advantages` (`id`, `icon`, `title`, `description`, `ordering`) VALUES
-(1,	'fas fa-credit-card',	'Možnost splátek',	'Splátky již od 8 tis. Kč – viz ceník',	1),
-(2,	'fas fa-school',	'Moderně zařízená učebna',	'Skvělá dostupnost MHD (Masarykovo náměstí) – viz FOTO',	2),
+(1,	'fas fa-credit-card',	'Možnost splátek',	'Splátky již od 8 tis. Kč',	1),
+(2,	'fas fa-school',	'Moderně zařízená učebna',	'Skvělá dostupnost MHD (Masarykovo náměstí)',	2),
 (3,	'fas fa-map-marker-alt',	'Doprava',	'Jízdy z místa bydliště či dle dohody',	3),
 (4,	'fas fa-calendar-alt',	'Flexibilní výcvik',	'Přizpůsobíme výcvik Vašim časovým potřebám',	4),
 (5,	'fas fa-book',	'Učební pomůcky',	'Zapůjčení s vratnou zálohou – viz ceník',	5),
-(6,	'fas fa-car-side',	'Moderní vozidlo',	'Výcvik na Škoda Fabia III. generace – viz FOTO',	6),
+(6,	'fas fa-car-side',	'Moderní vozidlo',	'Výcvik na Škoda Fabia III. generace',	6),
 (7,	'fas fa-chalkboard-teacher',	'Zkušení lektoři',	'Výuku a výcvik vedou odborní lektoři s dlouholetou praxí',	7);
 
 DROP TABLE IF EXISTS `contact_info`;
@@ -60,18 +60,18 @@ INSERT INTO `contact_info` (`id`, `name`, `address`, `ico`, `phone`, `email`, `m
 DROP TABLE IF EXISTS `courses`;
 CREATE TABLE `courses` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_czech_ci NOT NULL,
-  `description` text COLLATE utf8mb4_czech_ci,
-  `image` varchar(255) COLLATE utf8mb4_czech_ci DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci,
+  `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci DEFAULT NULL,
   `price` decimal(10,2) DEFAULT NULL,
-  `remaining_spots` int NOT NULL DEFAULT '0',
-  `starting_date` date NOT NULL DEFAULT '2025-01-01',
+  `location` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci NOT NULL,
+  `start_date` date NOT NULL DEFAULT '2025-01-01',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_czech_ci;
 
-INSERT INTO `courses` (`id`, `name`, `description`, `image`, `price`, `remaining_spots`, `starting_date`) VALUES
-(1,	'Skupina B',	'Výuka pro osobní automobily',	'/uploads/ridicak.jpg',	15000.00,	0,	'2025-01-01'),
-(2,	'Kondiční jízdy',	'Zdokonalení řidičských dovedností',	'/uploads/auto.jpg',	500.00,	0,	'2025-01-01');
+INSERT INTO `courses` (`id`, `name`, `description`, `image`, `price`, `location`, `start_date`) VALUES
+(1,	'Skupina B',	'Výuka pro osobní automobily',	'/uploads/ridicak.jpg',	18500.00,	'Shrekova Bažina 13',	'2025-11-16'),
+(2,	'Kondiční jízdy',	'Zdokonalení řidičských dovedností',	'/uploads/auto.jpg',	500.00,	'Shrekova Bažina 14',	'2025-03-23');
 
 DROP TABLE IF EXISTS `hero_section`;
 CREATE TABLE `hero_section` (
@@ -117,8 +117,8 @@ INSERT INTO `other_services` (`id`, `section`, `item`, `price`, `description`, `
 (2,	'public',	'Studenti po slevě',	'18 000,- Kč',	NULL,	2),
 (3,	'card',	'Platba kartou (Benefity, Benefit-plus, Pluxee)',	'18 500,- Kč',	'Vždy předem kontaktujte autoškolu. Kurz proběhne v termínu dle volných kapacit. Kartou Benefity, Benefit-plus, Pluxee lze platit částečnou cenu do poloviny ceny kurzu a zbytek v hotovosti doplatit do celkové ceny kurzu. (Možnost domluvy jiné varianty.)',	1),
 (4,	'installments',	'Záloha na začátku kurzu',	'8 500,- Kč',	'(Je možno domluvit i jinou variantu splátek.)',	1),
-(5,	'installments',	'2.–3. splátka (každá)',	'5 000,- Kč',	NULL,	2),
-(6,	'installments',	'Celkem',	'18 500,- Kč',	NULL,	3),
+(5,	'installments',	'2.–3. splátka (každá)',	'5 000,- Kč',	'',	2),
+(6,	'installments',	'Celkem',	'18 500,- Kč',	'',	3),
 (7,	'other',	'Kondiční–cvičná jízda (45 min.)',	'650,- Kč',	NULL,	1),
 (8,	'other',	'Opravná zkouška (jízda)',	'500,- Kč',	NULL,	2),
 (9,	'other',	'Opravná zkouška (test)',	'500,- Kč',	NULL,	3),
@@ -139,4 +139,4 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `username`, `password`, `role`) VALUES
 (1,	'admin',	'$2y$10$N5dEPMZoCCuisRpdN5/iE.gD4MApYT2KEaoqVt7NiJs5j6DB/5twm',	'admin');
 
--- 2025-03-07 16:26:23
+-- 2025-03-07 21:34:16
