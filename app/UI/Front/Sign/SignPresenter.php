@@ -37,47 +37,28 @@ final class SignPresenter extends Nette\Application\UI\Presenter
 	 * On successful submission, the user is redirected to the dashboard or back to the previous page.
 	 */
 	protected function createComponentSignInForm(): Form
-{
-    $form = $this->formFactory->create();
-    $form->addText('username', 'Username:')
-        ->setRequired('Please enter your username.');
-
-    $form->addPassword('password', 'Password:')
-        ->setRequired('Please enter your password.');
-
-    $form->addSubmit('send', 'Přihlásit se');
-
-    // Handle form submission
-    $form->onSuccess[] = function (Form $form, \stdClass $data): void {
-        try {
-            // Attempt to login user
-            $this->getUser()->login($data->username, $data->password);
-
-            // Check if repair form data exists in session
-            $session = $this->getSession()->getSection('repairForm');
-
-            if ($session->values) {
-                // Redirect back to RepairPresenter to process saved data
-                $this->redirect('Repair:resumeForm');
-            } else {
-                // Handle simplified backlinks
-                $redirectMap = [
-                    'repair' => ':Front:Repair:default',
-                    'dashboard' => ':Admin:AdminDashboard:default',
-                ];
-
-                $redirectUrl = $redirectMap[$this->backlink] ?? $this->link('Dashboard:default');
-
-                // Redirect to mapped or default page
-                $this->redirectUrl($redirectUrl);
-            }
-        } catch (Nette\Security\AuthenticationException) {
-            $form->addError('The username or password you entered is incorrect.');
-        }
-    };
-
-    return $form;
-}
+	{
+		$form = $this->formFactory->create();
+		$form->addText('username', 'Username:')
+			 ->setRequired('Please enter your username.');
+		$form->addPassword('password', 'Password:')
+			 ->setRequired('Please enter your password.');
+		$form->addSubmit('send', 'Přihlásit se');
+	
+		// Handle form submission
+		$form->onSuccess[] = function (Form $form, \stdClass $data): void {
+			try {
+				// Attempt to login user
+				$this->getUser()->login($data->username, $data->password);
+				// Redirect to :Front:Home:default upon successful login
+				$this->redirect(':Front:Home:default');
+			} catch (\Exception $e) {
+				$form->addError('Invalid credentials.');
+			}
+		};
+	
+		return $form;
+	}
 
 	
 
@@ -94,42 +75,7 @@ final class SignPresenter extends Nette\Application\UI\Presenter
 		// Username field
 		$form->addText('username', 'Username:')
 			->setRequired('Please pick a username.');
-	
-		// Email field
-		$form->addEmail('email', 'Email:')
-			->setRequired('Please enter your email.');
-	
-		// Name field
-		$form->addText('name', 'Name:')
-			->setRequired('Please fill in your name.');
-	
-		// Surname field
-		$form->addText('surname', 'Surname:')
-			->setRequired('Please fill in your surname.');
-	
-		// Phone number field
-		$form->addText('phone', 'Phone Number:')
-			->setRequired('Please enter your phone number.')
-			->addRule($form::Pattern, 'Please enter a valid phone number (digits only).', '^[0-9]+$');
-	
-		// Birth Date Fields
-		$form->addSelect('birth_day', 'Day:', array_combine(range(1, 31), range(1, 31)))
-			->setRequired('Please select your birth day.');
-	
-		$form->addSelect('birth_month', 'Month:', [
-			'1' => 'Leden', '2' => 'Únor', '3' => 'Březen', '4' => 'Duben',
-			'5' => 'Květen', '6' => 'Červen', '7' => 'Červenec', '8' => 'Srpen',
-			'9' => 'Září', '10' => 'Říjen', '11' => 'Listopad', '12' => 'Prosinec'
-		])->setRequired('Please select your birth month.');
-	
-		$years = range(date('Y') - 100, date('Y')); // Last 100 years
-		$form->addSelect('birth_year', 'Year:', array_combine($years, $years))
-			->setRequired('Please select your birth year.');
-	
-		// Address field
-		$form->addText('address', 'Address:')
-			->setRequired('Please enter your address.');
-	
+
 		// Password field
 		$form->addPassword('password', 'Password')
 			->setOption('description', sprintf('At least %d characters', $this->userFacade::PasswordMinLength))

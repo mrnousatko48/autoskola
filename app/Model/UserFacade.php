@@ -22,16 +22,9 @@ final class UserFacade implements Authenticator
     private const
         TableName = 'users',
         ColumnId = 'id',
-        ColumnName = 'name',
-        ColumnSurname = 'surname',
         ColumnUsername = 'username',
         ColumnPasswordHash = 'password',
-        ColumnEmail = 'email',
-        ColumnPhone = 'phone',
-        ColumnBirthDate = 'birth_date',  
-        ColumnAddress = 'address',   
-        ColumnRole = 'role',
-        ColumnImage = 'image';
+        ColumnRole = 'role';
 
 
     // Dependency injection of database explorer and password utilities

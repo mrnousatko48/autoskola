@@ -6,8 +6,6 @@ use Nette\Database\Context;
 
 /**
  * PageFacade consolidates page content retrieval from multiple tables.
- * This facade provides methods to fetch the hero, about, advantages, offerings,
- * contact, and course price data from the database.
  */
 class PageFacade {
     /** @var Context */
@@ -22,54 +20,37 @@ class PageFacade {
         $this->database = $database;
     }
 
-    /**
-     * Get the hero section data.
-     *
-     * @return \Nette\Database\Table\ActiveRow|null Returns the hero section row.
-     */
+    // Common fetch method for sections where only one row is expected.
+    private function fetchSingle(string $table) {
+        return $this->database->table($table)->fetch();
+    }
+
+    // Common update method.
+    private function updateRecord(string $table, int $id, array $values): void {
+        $this->database->table($table)->get($id)->update($values);
+    }
+
     public function getHeroSection() {
-        return $this->database->table('hero_section')->fetch();
+        return $this->fetchSingle('hero_section');
     }
 
-    /**
-     * Get the about section data.
-     *
-     * @return \Nette\Database\Table\ActiveRow|null Returns the about section row.
-     */
     public function getAboutSection() {
-        return $this->database->table('about_section')->fetch();
+        return $this->fetchSingle('about_section');
     }
 
-    /**
-     * Get all advantages for the page.
-     *
-     * @return \Nette\Database\Table\Selection Returns a collection of advantage rows ordered by 'ordering'.
-     */
+    public function getContactInfo() {
+        return $this->fetchSingle('contact_info');
+    }
+
     public function getAdvantages() {
         return $this->database->table('advantages')->order('ordering ASC');
     }
 
-    /**
-     * Get all offerings.
-     *
-     * @return \Nette\Database\Table\Selection Returns a collection of offering rows ordered by 'ordering'.
-     */
     public function getOfferings() {
         return $this->database->table('offerings')->order('ordering ASC');
     }
 
-    /**
-     * Get the contact section information.
-     *
-     * @return \Nette\Database\Table\ActiveRow|null Returns the contact information row.
-     */
-    public function getContactInfo() {
-        return $this->database->table('contact_info')->fetch();
-    }
-
-
-    public function getAllCourses()
-    {
+    public function getAllCourses() {
         return $this->database->table('courses')->fetchAll();
     }
 
@@ -78,64 +59,53 @@ class PageFacade {
      * @param int $id
      * @return \Nette\Database\Table\ActiveRow|null
      */
-    public function getCourseById(int $id)
-    {
+    public function getCourseById(int $id) {
         return $this->database->table('courses')->get($id);
     }
 
-    public function addCourse(string $name, ?string $description, ?string $image, float $price): void
-{
-    $this->database->table('courses')->insert([
-        'name' => $name,
-        'description' => $description,
-        'image' => $image,
-        'price' => $price,
-    ]);
-}
-
-public function getGroupedCoursePrices(): array
-{
-    $rows = $this->database->table('course_prices')->order('section ASC, ordering ASC');
-    $grouped = [];
-    foreach ($rows as $row) {
-        $grouped[$row->section][] = $row;
+    public function addCourse(string $name, ?string $description, ?string $image, float $price): void {
+        $this->database->table('courses')->insert([
+            'name' => $name,
+            'description' => $description,
+            'image' => $image,
+            'price' => $price,
+        ]);
     }
-    return $grouped;
-}
 
-public function updateHeroSection(int $id, array $values): void
-{
-    $this->database->table('hero_section')->get($id)->update($values);
-}
+    public function getGroupedCoursePrices(): array {
+        $rows = $this->database->table('course_prices')->order('section ASC, ordering ASC');
+        $grouped = [];
+        foreach ($rows as $row) {
+            $grouped[$row->section][] = $row;
+        }
+        return $grouped;
+    }
 
-public function updateAboutSection(int $id, array $values): void
-{
-    $this->database->table('about_section')->get($id)->update($values);
-}
+    public function updateHeroSection(int $id, array $values): void {
+        $this->updateRecord('hero_section', $id, $values);
+    }
 
-public function updateContactInfo(int $id, array $values): void
-{
-    $this->database->table('contact_info')->get($id)->update($values);
-}
+    public function updateAboutSection(int $id, array $values): void {
+        $this->updateRecord('about_section', $id, $values);
+    }
 
-public function updateAdvantage(int $id, array $values): void
-{
-    $this->database->table('advantages')->get($id)->update($values);
-}
+    public function updateContactInfo(int $id, array $values): void {
+        $this->updateRecord('contact_info', $id, $values);
+    }
 
-public function updatePrice(int $id, array $values): void
-{
-    $this->database->table('course_prices')->get($id)->update($values);
-}
+    public function updateAdvantage(int $id, array $values): void {
+        $this->updateRecord('advantages', $id, $values);
+    }
 
-public function getPriceById(int $id)
-{
-    return $this->database->table('course_prices')->get($id);
-}
+    public function updatePrice(int $id, array $values): void {
+        $this->updateRecord('course_prices', $id, $values);
+    }
 
-public function updateCourse(int $id, array $values): void
-{
-    $this->database->table('courses')->get($id)->update($values);
+    public function getPriceById(int $id) {
+        return $this->database->table('course_prices')->get($id);
+    }
 
-}
+    public function updateCourse(int $id, array $values): void {
+        $this->updateRecord('courses', $id, $values);
+    }
 }
