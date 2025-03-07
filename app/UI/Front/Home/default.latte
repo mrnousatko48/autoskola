@@ -50,7 +50,7 @@
           <h2 class="mb-4">Nabízíme</h2>
           <p class="lead">Výcvik a výuku k získání řidičského oprávnění skupiny B, které opravňuje k řízení:</p>
           <ul class="list-group list-group-flush text-start">
-            {foreach $offerings as $offer}
+            {foreach $offers as $offer}
               <li class="list-group-item">
                 <strong>{$offer->label}</strong> {$offer->content}
               </li>
@@ -116,7 +116,7 @@
               <div class="card-body">
                 <h5 class="card-title">{$course->name}</h5>
                 <p class="card-text">{$course->description}</p>
-                <a href="{link 'CourseDetail', id => $course->id}" class="btn btn-primary">Zjistit více</a>
+                <a href="{link 'detail', id => $course->id}" class="btn btn-primary">Zjistit více</a>
               </div>
             </div>
           </div>

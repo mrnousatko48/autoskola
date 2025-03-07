@@ -73,7 +73,7 @@ class PageFacade {
     }
 
     public function getGroupedCoursePrices(): array {
-        $rows = $this->database->table('course_prices')->order('section ASC, ordering ASC');
+        $rows = $this->database->table('other_services')->order('section ASC, ordering ASC');
         $grouped = [];
         foreach ($rows as $row) {
             $grouped[$row->section][] = $row;
@@ -98,11 +98,11 @@ class PageFacade {
     }
 
     public function updatePrice(int $id, array $values): void {
-        $this->updateRecord('course_prices', $id, $values);
+        $this->updateRecord('other_services', $id, $values);
     }
 
     public function getPriceById(int $id) {
-        return $this->database->table('course_prices')->get($id);
+        return $this->database->table('other_services')->get($id);
     }
 
     public function updateCourse(int $id, array $values): void {

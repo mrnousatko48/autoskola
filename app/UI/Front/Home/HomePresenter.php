@@ -33,7 +33,7 @@ final class HomePresenter extends Nette\Application\UI\Presenter
         $this->template->hero = $this->pageFacade->getHeroSection();
         $this->template->about = $this->pageFacade->getAboutSection();
         $this->template->advantages = $this->pageFacade->getAdvantages();
-        $this->template->offerings = $this->pageFacade->getOfferings();
+        $this->template->offers = $this->pageFacade->getOfferings();
         $this->template->contact = $this->pageFacade->getContactInfo();
         $this->template->groupedPrices = $this->pageFacade->getGroupedCoursePrices();
         $this->template->courses = $this->pageFacade->getAllCourses();
