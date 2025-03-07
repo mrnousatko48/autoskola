@@ -108,4 +108,18 @@ class PageFacade {
     public function updateCourse(int $id, array $values): void {
         $this->updateRecord('courses', $id, $values);
     }
+
+public function getOtherServices(int $courseId) {
+    return $this->database->table('other_services')
+        ->where('course_id', $courseId)
+        ->order('ordering ASC');
+}
+
+public  function getOfferById(int $id) {
+    return $this->database->table('offerings')->get($id);
+}
+
+public function updateOffer(int $id, array $values): void {
+    $this->updateRecord('offerings', $id, $values);
+}
 }

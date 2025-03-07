@@ -71,10 +71,8 @@ final class DashboardPresenter extends Presenter
     {
         $id = $this->getParameter('id');
         if ($id) {
-            $advantage = $this->pageFacade->getAdvantages()->get($id);
-            if (!$advantage) {
-                $this->error('Advantage not found');
-            }
+            $advantage = $this->pageFacade->getAdvantages()->get((int)$id);
+       
             $this->template->advantage = $advantage;
         } else {
             $this->template->advantages = $this->pageFacade->getAdvantages();
@@ -87,6 +85,10 @@ final class DashboardPresenter extends Presenter
      */
     public function renderOfferings(): void
     {
+        $id = $this->getParameter('id');
+        if ($id) {
+            $this->template->offering = $this->pageFacade->getOfferById((int)$id);
+        }
         $this->template->offerings = $this->pageFacade->getOfferings();
         $this->template->setFile(__DIR__ . '/Templates/offerings.latte');
     }
@@ -96,6 +98,10 @@ final class DashboardPresenter extends Presenter
      */
     public function renderPrices(): void
     {
+        $id = $this->getParameter('id');
+        if ($id) {
+            $this->template->price = $this->pageFacade->getPriceById((int)$id);
+        }
         $this->template->groupedPrices = $this->pageFacade->getGroupedCoursePrices();
         $this->template->setFile(__DIR__ . '/Templates/prices.latte');
     }
@@ -137,26 +143,83 @@ final class DashboardPresenter extends Presenter
         foreach ($fields as $name => $config) {
             $method = 'add' . ucfirst($config['type']);
             $field = $form->$method($name, $config['label'] ?? '');
-            // Use a provided 'default' value or fallback to the entity property.
+            
+            // Set the default value from config or the entity
             if (array_key_exists('default', $config)) {
                 $field->setDefaultValue($config['default']);
             } else {
                 $field->setDefaultValue($entity->{$name});
             }
+            
+            // If an HTML type is provided (e.g. 'date'), set it
+            if (isset($config['htmlType'])) {
+                $field->setHtmlType($config['htmlType']);
+            }
+            
             if (!empty($config['required'])) {
                 $field->setRequired();
             }
+            
+            // Add Bootstrap styling for most fields (skip hidden fields)
+            if ($config['type'] !== 'hidden') {
+                $field->getControlPrototype()->addClass('form-control');
+            }
         }
-        $form->addSubmit('save', 'Save');
-
+        
+        // Add a submit button with Bootstrap classes
+        $form->addSubmit('save', 'Uložit')
+             ->getControlPrototype()->addClass('btn btn-primary');
+        
         $form->onSuccess[] = function (Form $form, $values) use ($entity, $updateCallback, $flashMessage, $redirectDestination): void {
             $updateCallback($entity->id, (array)$values);
             $this->flashMessage($flashMessage, 'success');
             $this->redirect($redirectDestination);
         };
-
+    
         return $form;
     }
+    /**
+ * Create a form to edit an Offering.
+ *
+ * @return Form
+ */
+public function createComponentOfferForm(): Form
+{
+    $id = (int)$this->getParameter('id');
+    if (!$id) {
+        $this->error('Offer not found');
+    }
+    $offer = $this->pageFacade->getOfferById($id);
+    if (!$offer) {
+        $this->error('Offer not found');
+    }
+    $fields = [
+        'label'   => ['type' => 'text',     'label' => 'Label:',   'required' => true],
+        'content' => ['type' => 'textArea', 'label' => 'Content:', 'required' => true],
+    ];
+
+    $form = $this->createEditForm(
+        $offer,
+        $fields,
+        function ($submittedId, $values) {
+            $offerId = (int)$values['id'];
+            $this->pageFacade->updateOffer($offerId, (array)$values);
+        },
+        'Offer updated successfully.',
+        'Dashboard:offerings'
+    );
+
+    // Add a hidden field for the offer ID
+    $form->addHidden('id')->setDefaultValue($offer->id);
+
+    // Set the form action so that the ID remains in the URL upon submission
+    $form->setAction($this->link('Dashboard:offerings', ['id' => $offer->id]));
+
+    return $form;
+}
+    
+    
+    
 
     /**
      * Create a form to edit the Hero Section.
@@ -247,19 +310,26 @@ final class DashboardPresenter extends Presenter
             $this->error('Advantage not found');
         }
         $fields = [
-            'icon'        => ['type' => 'text', 'label' => 'Icon:', 'required' => true],
-            'title'       => ['type' => 'text', 'label' => 'Title:', 'required' => true],
+            'icon'        => ['type' => 'text',     'label' => 'Icon:',        'required' => true],
+            'title'       => ['type' => 'text',     'label' => 'Title:',       'required' => true],
             'description' => ['type' => 'textArea', 'label' => 'Description:', 'required' => true],
-            'ordering'    => ['type' => 'integer', 'label' => 'Ordering:', 'required' => true],
         ];
-
-        return $this->createEditForm(
+    
+        $form = $this->createEditForm(
             $advantage,
             $fields,
             fn($id, $values) => $this->pageFacade->updateAdvantage($id, $values),
             'Advantage updated successfully.',
             'Dashboard:advantages'
         );
+    
+        // Add a hidden field for the advantage ID
+        $form->addHidden('id')->setDefaultValue($advantage->id);
+    
+        // Ensure the advantage ID remains in the URL upon submission
+        $form->setAction($this->link('Dashboard:advantages', ['id' => $advantage->id]));
+    
+        return $form;
     }
 
     /**
@@ -280,19 +350,25 @@ final class DashboardPresenter extends Presenter
             'item'        => ['type' => 'text', 'label' => 'Item:', 'required' => true],
             'price'       => ['type' => 'text', 'label' => 'Price:', 'required' => true],
             'description' => ['type' => 'textArea', 'label' => 'Description:'],
-            'ordering'    => ['type' => 'integer', 'label' => 'Ordering:', 'required' => true],
             'section'     => ['type' => 'hidden', 'label' => ''],
         ];
-
-        return $this->createEditForm(
+    
+        $form = $this->createEditForm(
             $price,
             $fields,
             fn($id, $values) => $this->pageFacade->updatePrice($id, $values),
             'Price updated successfully.',
             'Dashboard:prices'
         );
+        
+        // Add a hidden field for the price ID
+        $form->addHidden('id')->setDefaultValue($price->id);
+        
+        // Set the form action so that the ID remains in the URL upon submission
+        $form->setAction($this->link('Dashboard:prices', ['id' => $price->id]));
+        
+        return $form;
     }
-
     /**
      * Create a form to edit a Course.
      *
@@ -300,23 +376,45 @@ final class DashboardPresenter extends Presenter
      */
     public function createComponentCourseForm(): Form
     {
-        $id = (int)$this->getParameter('id');
-        $course = $this->pageFacade->getCourseById($id);
+        $id = $this->getParameter('id');
+        if (!$id) {
+            $this->error('Course not found');
+        }
+        $course = $this->pageFacade->getCourseById((int)$id);
         if (!$course) {
             $this->error('Course not found');
         }
         $fields = [
-            'name'        => ['type' => 'text', 'label' => 'Course Name:', 'required' => true],
-            'description' => ['type' => 'textArea', 'label' => 'Description:', 'required' => true],
-            'image'       => ['type' => 'text', 'label' => 'Image URL:', 'required' => true],
+            'name'        => ['type' => 'text',     'label' => 'Název Kurzu',    'required' => true],
+            'description' => ['type' => 'textArea', 'label' => 'Popis:',    'required' => true],
+            'image'       => ['type' => 'text',     'label' => 'Obrázek:',      'required' => true],
+            'price'       => ['type' => 'text',     'label' => 'Cena:',          'required' => true],
+            'location'    => ['type' => 'text',     'label' => 'Adresa:',       'required' => true],
+            'start_date'  => ['type' => 'text',     'label' => 'Začíná:',     'required' => true, 'htmlType' => 'date'],
         ];
-
-        return $this->createEditForm(
+    
+        $form = $this->createEditForm(
             $course,
             $fields,
-            fn($id, $values) => $this->pageFacade->updateCourse($id, $values),
+            function ($submittedId, $values) {
+                $courseId = (int)$values['id'];
+                $this->pageFacade->updateCourse($courseId, (array)$values);
+            },
             'Course updated successfully.',
             'Dashboard:courses'
         );
+        $form->addHidden('id')->setDefaultValue($course->id);
+    
+        // Preload the date in the format HTML date input requires (YYYY-MM-DD)
+        if ($course->start_date instanceof \DateTimeInterface) {
+            $form->getComponent('start_date')->setDefaultValue($course->start_date->format('Y-m-d'));
+        }
+        
+        // Ensure the course ID remains in the URL when the form is submitted
+        $form->setAction($this->link('Dashboard:courses', ['id' => $course->id]));
+        
+        return $form;
     }
+    
+    
 }

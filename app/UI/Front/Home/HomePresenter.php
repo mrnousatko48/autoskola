@@ -47,4 +47,19 @@ final class HomePresenter extends Nette\Application\UI\Presenter
         // Only the grouped course prices are needed here.
         $this->template->groupedPrices = $this->pageFacade->getGroupedCoursePrices();
     }
+
+    public function renderDetail($id): void
+    {
+        // Fetch course record through PageFacade
+        $course = $this->pageFacade->getCourseById((int)$id);
+        if (!$course) {
+            $this->error('Course not found');
+        }
+    
+        // Fetch related other_services using the new facade method
+        $otherServices = $this->pageFacade->getOtherServices((int)$id);
+    
+        $this->template->course = $course;
+        $this->template->otherServices = $otherServices;
+    }
 }

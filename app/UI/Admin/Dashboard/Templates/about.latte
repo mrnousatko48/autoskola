@@ -15,6 +15,9 @@
   <section id="about" class="about-us py-5">
     <div class="container">
       <h2 class="text-center mb-4">{$about->heading}</h2>
+       <p class="mt-3 text-center">
+          <a href="{link Dashboard:default}" class="btn btn-secondary">← Back to Dashboard</a>
+        </p>
       <div class="row align-items-center">
         <div class="col-md-6">
           <img src="{$about->image}" alt="{$about->alt_text}" class="img-fluid rounded" loading="lazy">
@@ -36,9 +39,6 @@
             {control aboutForm}
           </div>
         </div>
-        <p class="mt-3 text-center">
-          <a href="{link Dashboard:default}" class="btn btn-secondary">← Back to Dashboard</a>
-        </p>
       </div>
     </div>
   </div>

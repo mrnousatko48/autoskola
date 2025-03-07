@@ -1,37 +1,46 @@
 {block content}
-  <h1>Výhody</h1>
-  {if isset($advantage)}
-    <!-- Edit Mode: Display the edit form for a single advantage -->
-    <h2>Edit Advantage</h2>
-    {control advantageForm}
-    <p>
-      <a href="{link default}">← Zpět na seznam výhod</a>
-    </p>
-  {else}
-    <!-- List Mode: Display all advantages -->
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Icon</th>
-          <th>Title</th>
-          <th>Description</th>
-          <th>Ordering</th>
-          <th>Edit</th>
-        </tr>
-      </thead>
-      <tbody>
-        {foreach $advantages as $adv}
+  <div class="container mt-5">
+    {if $presenter->getParameter('id')}
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">Edit Advantage</h3>
+        </div>
+        <div class="card-body">
+          {control advantageForm}
+        </div>
+        <div class="card-footer text-end">
+          <a href="{link Dashboard:advantages}" class="btn btn-secondary">← Zpět na seznam výhod</a>
+        </div>
+      </div>
+    {else}
+      <h1>Výhody</h1>
+      <p>
+      <a href="{link Dashboard:default}" class="btn btn-secondary">← Back to Dashboard</a>
+      <!-- Optionally, add a "New Course" button here -->
+      </p>
+      <table class="table table-bordered">
+        <thead>
           <tr>
-            <td><i class="{$adv->icon}"></i></td>
-            <td>{$adv->title}</td>
-            <td>{$adv->description}</td>
-            <td>{$adv->ordering}</td>
-            <td>
-              <a href="{link default, id => $adv->id}">Edit</a>
-            </td>
+            <th>Icon</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Edit</th>
           </tr>
-        {/foreach}
-      </tbody>
-    </table>
-  {/if}
+        </thead>
+        <tbody>
+          {foreach $advantages as $adv}
+            <tr>
+              <td><i class="{$adv->icon}"></i></td>
+              <td>{$adv->title}</td>
+              <td>{$adv->description}</td>
+              <td>
+                <!-- This link sets the id parameter so the template enters edit mode -->
+                <a href="{link Dashboard:advantages, id => $adv->id}" class="btn btn-sm btn-primary">Edit</a>
+              </td>
+            </tr>
+          {/foreach}
+        </tbody>
+      </table>
+    {/if}
+  </div>
 {/block}

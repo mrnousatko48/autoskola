@@ -1,18 +1,4 @@
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Use your dashboard CSS -->
-  <link rel="preload" href="/css/dash.css" as="style">
-  <link rel="stylesheet" href="/css/dash.css">
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
-        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" 
-        crossorigin="anonymous">
-  <title>Prices - Admin</title>
-</head>
-<body>
+{block content}
   <div class="container mt-5">
     {if isset($price)}
       <h1 class="mb-4 text-center">Edit Price</h1>
@@ -47,7 +33,6 @@
               <th>Item</th>
               <th>Price</th>
               <th>Description</th>
-              <th>Ordering</th>
               <th>Edit</th>
             </tr>
           </thead>
@@ -57,7 +42,6 @@
                 <td>{$p->item}</td>
                 <td>{$p->price}</td>
                 <td>{$p->description}</td>
-                <td>{$p->ordering}</td>
                 <td>
                   <a href="{link Dashboard:prices, id => $p->id}" class="btn btn-sm btn-primary">Edit</a>
                 </td>
@@ -68,5 +52,4 @@
       {/foreach}
     {/if}
   </div>
-</body>
-</html>
+{/block}
