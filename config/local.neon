@@ -5,3 +5,10 @@ database:
 	user: root
 	password: root
 
+mail:
+     smtp: true
+     host: smtp.seznam.cz
+     port: 465
+     username: burdadko.cczz@seznam.cz
+     password: lode1171
+     encryption: ssl

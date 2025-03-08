@@ -7,6 +7,7 @@ use Nette;
 use App\Model\PageFacade;
 use App\Model\RegistrationFacade;
 use Nette\Application\UI\Form;
+use App\MailSender\MailSender;
 
 final class HomePresenter extends Nette\Application\UI\Presenter
 {
@@ -14,17 +15,18 @@ final class HomePresenter extends Nette\Application\UI\Presenter
     private PageFacade $pageFacade;
     private RegistrationFacade $registrationFacade;
     private $course;
+    private MailSender $mailSender;
 
     /**
      * Constructor.
      *
      * @param PageFacade $pageFacade Central facade for retrieving page content from multiple tables.
      */
-    public function __construct(PageFacade $pageFacade, RegistrationFacade $registrationFacade)
+    public function __construct(PageFacade $pageFacade, RegistrationFacade $registrationFacade, MailSender $mailSender)
     {
-        parent::__construct();
         $this->pageFacade = $pageFacade;
         $this->registrationFacade = $registrationFacade;
+        $this->mailSender = $mailSender;
     }
 
     /**
@@ -34,7 +36,6 @@ final class HomePresenter extends Nette\Application\UI\Presenter
      */
     public function renderDefault(): void
     {
-
         $this->template->hero = $this->pageFacade->getHeroSection();
         $this->template->about = $this->pageFacade->getAboutSection();
         $this->template->advantages = $this->pageFacade->getAdvantages();
@@ -49,13 +50,11 @@ final class HomePresenter extends Nette\Application\UI\Presenter
      */
     public function renderCenik(): void
     {
-        // Only the grouped course prices are needed here.
         $this->template->groupedPrices = $this->pageFacade->getGroupedCoursePrices();
     }
 
     public function actionDetail(int $courseId): void
     {
-        // Retrieve the course via the facade
         $this->course = $this->pageFacade->getCourseById($courseId);
     }
 
@@ -65,9 +64,9 @@ final class HomePresenter extends Nette\Application\UI\Presenter
     }
 
     // Create the registration form
-    protected function createComponentRegistrationForm(): Form
+    protected function createComponentRegistrationForm()
     {
-        $form = new Form;
+        $form = new Form();
 
         $form->addText('name', 'Jméno:')
             ->setRequired('Prosím vyplňte své jméno.')
@@ -89,37 +88,35 @@ final class HomePresenter extends Nette\Application\UI\Presenter
         $form->addSubmit('submit', 'Zaregistrovat se')
             ->setHtmlAttribute('class', 'btn btn-primary');
 
-        $form->onSuccess[] = [$this, 'registrationFormSucceeded'];
+        $form->onSuccess[] = [$this, 'registrationFormSucceded'];
 
         return $form;
     }
 
-    // Handle form submission
-    public function registrationFormSucceeded(Form $form, \stdClass $values)
+    public function registrationFormSucceded(Form $form, $data)
     {
-        try {
-            $data = [
-                'name'      => $values->name,
-                'address'   => $values->address,
-                'email'     => $values->email,
-                'phone'     => $values->phone,
-                'course_id' => $this->course->id, // Link to the current course
-            ];
-    
-            $this->registrationFacade->createRegistration($data);
-            $this->flashMessage('Registrace byla úspěšně odeslána!', 'success');
-            $this->redirect('this');
-        } 
-        catch (\Nette\Application\AbortException $e) {
-            throw $e; // Let Nette handle the abort exception.
-        }
-        catch (\Exception $e) {
-            // Optional: if you want to catch duplicate entry errors (e.g., code '23000')
-            if ($e->getCode() === '23000') {
-                $this->flashMessage('Jste již registrován!', 'danger');
-            } else {
-                $this->flashMessage('Registrace se nepodařilo odeslat. Zkuste to prosím znovu.', 'danger');
-            }
-        }
+        bdump($data);
+        $this->mailSender->sendRegistrationEmail(
+            'burdadko.cz@gmail.com', // Admin email
+            $data->name,
+            $this->course->name,
+            "Adresa: " . $data->address . "\nTelefon: " . $data->phone . "\nDatum registrace: " . date('d.m.Y H:i')
+        );
+
+        $this->flashMessage('Registrace byla úspěšně odeslána a email byl odeslán administrátorovi!', 'success');
+        $this->redirect('this');
+    }
+
+    public function handleSendEmail(): void
+    {
+        $this->mailSender->sendRegistrationEmail(
+            'burdadko.cczz@seznam.cz',
+            'Test User',
+            'Test Course',
+            'Testovací registrace'
+        );
+
+        $this->flashMessage('Email byl odeslán!', 'success');
+        $this->redirect('this');
     }
 }
