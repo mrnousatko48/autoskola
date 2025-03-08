@@ -12,14 +12,22 @@ use Nette\Application\UI\Form;
 
 final class SignPresenter extends Nette\Application\UI\Presenter
 {
-    // Dependency injection of form factory and user management facade
     public function __construct(
         private UserFacade $userFacade,
         private FormFactory $formFactory
     ) {
         parent::__construct();
+
     }
 
+    public function actionUp(): void
+    {
+        if (!$this->user->isLoggedIn() || !$this->user->isInRole('admin')) {
+            $this->flashMessage('Sem nemáš přístup😬', 'danger');
+            $this->redirect(':Front:Home:default');
+        }
+    }
+    
     /**
      * Creates a sign-in form with only username and password fields.
      * Upon successful login, the user is redirected to Home:default.
@@ -37,9 +45,9 @@ final class SignPresenter extends Nette\Application\UI\Presenter
             try {
                 // Attempt to log in with provided credentials.
                 $this->getUser()->login($data->username, $data->password);
-                $this->redirect(':Front:Home:default');
+                $this->redirect(':Admin:Dashboard:default');
             } catch (Nette\Security\AuthenticationException $e) {
-                $form->addError('The username or password you entered is incorrect.');
+                $form->addError('neplatné přihlašovací údaje');
             }
         };
 
@@ -72,12 +80,11 @@ final class SignPresenter extends Nette\Application\UI\Presenter
                 $role = 'uzivatel';
                 // Register the new user with only username and password.
                 $this->userFacade->add($data->username, $data->password, $role);
-                // Automatically log the new user in.
-                $this->getUser()->login($data->username, $data->password);
-                $this->redirect(':Front:Home:default');
+
             } catch (DuplicateNameException $e) {
                 $form['username']->addError('Username is already taken.');
             }
+            $this->redirect(':Admin:Dashboard:default');
         };
 
         return $form;

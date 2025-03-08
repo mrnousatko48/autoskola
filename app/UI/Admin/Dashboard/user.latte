@@ -1,0 +1,50 @@
+{block content}
+  <div class="container mt-5">
+    <h1>Správci</h1>
+    <p class="lead">Zde můžete spravovat uživatele aplikace.</p>
+        <p class="mt-3 text-center">
+          <a n:href=":Front:Sign:up" class="btn btn-secondary">Přidat Správce</a>
+        </p>
+
+    {if $presenter->getParameter('id')}
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">Editace uživatele</h3>
+        </div>
+        <div class="card-body">
+          {control editUserForm}
+        </div>
+        <div class="card-footer text-end">
+          <a href="{link Dashboard:user}" class="btn btn-secondary">Zrušit</a>
+        </div>
+      </div>
+    {/if}
+
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Uživatelské jméno</th>
+          <th>Role</th>
+          <th class="text-center">Akce</th>
+        </tr>
+      </thead>
+      <tbody>
+        {foreach $userData as $userItem}
+          <tr>
+            <td scope="row">{$userItem->id}</td>
+            <td>{$userItem->username}</td>
+            <td>{$userItem->role}</td>
+            <td class="text-center">
+              {if $presenter->user->getIdentity()->id !== $userItem->id}
+                <a href="{link Dashboard:deleteUser, id => $userItem->id}" class="btn btn-sm btn-danger" onclick="return confirm('Opravdu chcete odstranit tohoto uživatele?');">Delete</a>
+              {else}
+                <span>N/A</span>
+              {/if}
+            </td>
+          </tr>
+        {/foreach}
+      </tbody>
+    </table>
+  </div>
+{/block}

@@ -47,6 +47,7 @@
                  {$user->identity->username}
               </a>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li><a class="dropdown-item text-primary" n:href=":Admin:Dashboard:default">Administrace</a></li>
                 <li><a class="dropdown-item text-danger" n:href="Sign:out">Odhlásit se</a></li>
               </ul>
             </div>
@@ -54,6 +55,15 @@
         </div>
       </div>
     </nav>
+
+    {if $flashes}
+      {foreach $flashes as $flash}
+        <div class="alert alert-{$flash->type} alert-dismissible fade show" role="alert">
+          {$flash->message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {/foreach}
+    {/if}
 
     {block hero}
     <header class="hero">

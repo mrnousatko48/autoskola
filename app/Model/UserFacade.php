@@ -93,4 +93,39 @@ final class UserFacade implements Authenticator
             self::ColumnPasswordHash => $this->passwords->hash($newPassword),
         ]);
     }
+
+    /**
+     * Register a new user with the provided username and password.
+     */
+    public function add(string $username, string $password): void
+    {
+        // Validate the password length
+        if (strlen($password) < self::PasswordMinLength) {
+            throw new \InvalidArgumentException('The password is too short.');
+        }
+
+        // Hash the password
+        $hash = $this->passwords->hash($password);
+
+        // Insert the new user into the database
+        $this->database->table(self::TableName)->insert([
+            self::ColumnUsername => $username,
+            self::ColumnPasswordHash => $hash,
+            self::ColumnRole => 'admin',
+        ]);
+    }
+    
+    public function getAllUsers()
+    {
+        return $this->database
+            ->table(self::TableName);
+    }
+
+    public function deleteUser(int $id): void
+{
+    $this->database->table(self::TableName)
+                   ->where(self::ColumnId, $id)
+                   ->delete();
+}
+
 }

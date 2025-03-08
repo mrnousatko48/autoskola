@@ -26,12 +26,23 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link" n:href=":Front:Home:default">Domů</a></li>
-
+        <li class="nav-item"><a class="nav-link" n:href=":Admin:Dashboard:user">Správci</a></li>
       </ul>
-      <!-- Login Button -->
-      <div n:if="!$user->isLoggedIn()" class="ms-3">
-        <a n:href=":Front:Sign:in" class="btn btn-outline-light">Přihlásit se</a>
+          <!-- Dropdown for logged-in user -->
+          <div n:if="$user->isLoggedIn()" class="ms-3">
+            <div class="dropdown">
+              <a class="btn btn-secondary dropdown-toggle" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                 {$user->identity->username}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li><a class="dropdown-item text-primary" n:href=":Front:Home:default">Domů</a></li>
+                <li><a class="dropdown-item text-danger" n:href=":Front:Sign:out">Odhlásit se</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
+    </nav>
     </div>
   </div>
 </nav>

@@ -6,6 +6,7 @@ namespace App\UI\Admin\Dashboard;
 use Nette\Application\UI\Presenter;
 use Nette\Application\UI\Form;
 use App\Model\PageFacade;
+use App\Model\UserFacade;
 
 /**
  * DashboardPresenter provides separate admin pages for editing each section.
@@ -14,16 +15,27 @@ final class DashboardPresenter extends Presenter
 {
     /** @var PageFacade */
     private PageFacade $pageFacade;
+    private UserFacade $userFacade;
 
     /**
      * Constructor.
      *
      * @param PageFacade $pageFacade Central facade for retrieving and updating page content.
      */
-    public function __construct(PageFacade $pageFacade)
+    public function __construct(PageFacade $pageFacade, UserFacade $userFacade)
     {
         parent::__construct();
         $this->pageFacade = $pageFacade;
+        $this->userFacade = $userFacade;
+    }
+
+    protected function startup(): void
+    {
+        parent::startup();
+        if (!$this->user->isLoggedIn() || !$this->user->isInRole('admin')) {
+            $this->flashMessage('sem nemáš přístup🚫', 'danger');
+            $this->redirect(':Front:Home:default');
+        }
     }
 
     /**
@@ -31,7 +43,10 @@ final class DashboardPresenter extends Presenter
      */
     public function renderDefault(): void
     {
-        // No additional data is needed for the dashboard menu.
+    }
+    public function renderUser(): void
+    {
+        $this->template->userData = $this->userFacade->getAllUsers();
     }
 
     /**
@@ -60,6 +75,7 @@ final class DashboardPresenter extends Presenter
         $this->template->contact = $this->pageFacade->getContactInfo();
         $this->template->setFile(__DIR__ . '/Templates/contact.latte');
     }
+
 
     /**
      * Render the Advantages edit page.
@@ -415,6 +431,17 @@ public function createComponentOfferForm(): Form
         
         return $form;
     }
+
+public function actionDeleteUser(int $id): void
+{
+    if ($this->user->getIdentity()->id === $id) {
+        $this->flashMessage('Nemůžeš odstranit sebe.', 'danger');
+        $this->redirect('user');
+    }
+    $this->userFacade->deleteUser($id); // Make sure such method exists
+    $this->flashMessage('Uživatel byl úspěšně odstraněn.', 'success');
+    $this->redirect('user');
+} 
     
     
 }
