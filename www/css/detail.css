@@ -1,101 +1,162 @@
 /* ======= Hero Section for Detail Page ======= */
 .hero {
-    position: relative;
-    background-size: cover;
-    background-position: center;
-    height: 300px; /* Adjust height as needed */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 30px;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  height: 300px; /* Adjust height as needed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.hero .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Creates a dark overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero .overlay h1 {
+  color: #fff;
+  font-size: 2.5rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  margin: 0;
+}
+
+/* ======= Moderní kontejnery pro sloupce ======= */
+.modern-columns {
+  margin-top: 30px;
+  display: flex; /* Zajistí, že sloupce budou mít stejnou výšku */
+  flex-wrap: wrap; /* Pro responzivitu */
+}
+
+.modern-container {
+  background: #fff; /* Bílé pozadí pro čistý vzhled */
+  border-radius: 10px; /* Zaoblené rohy */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Jemný stín */
+  padding: 20px; /* Vnitřní odsazení */
+  border: 1px solid #e0e0e0; /* Jemný rámeček */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Obsah se rovnoměrně rozloží */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Plynulý přechod pro interakce */
+  height: 100%; /* Zajistí stejnou výšku sloupců */
+}
+
+.modern-container:hover {
+  transform: translateY(-5px); /* Lehké zvednutí při přejetí myší */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Silnější stín při přejetí */
+}
+
+.modern-container h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 600;
+  border-bottom: 2px solid #007bff; /* Modrá čára pod nadpisem */
+  padding-bottom: 10px;
+}
+
+/* Specifické styly pro kontaktní kontejner */
+.contact-container {
+  padding: 8px; /* Reduced from 15px for a more compact layout */
+  height: auto; /* Ensure height adjusts to content */
+}
+
+.contact-container .big-phone {
+  font-size: 1.5rem; /* Reduced from 2.5rem to cut height */
+  font-weight: bold;
+  color: #007bff;
+  margin: 10px 0; /* Reduced margin for compactness */
+  text-align: center;
+}
+
+.contact-container .big-phone a {
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.contact-container .big-phone a:hover {
+  color: #0056b3;
+}
+
+.contact-container .small-text {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 5px; /* Reduced from auto to tighten layout */
+  text-align: center;
+}
+
+/* Zlepšení formuláře */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #333;
+}
+
+.form-control {
+  border-radius: 5px;
+  border: 1px solid #ced4da;
+  padding: 10px;
+  transition: border-color 0.3s ease;
+  width: 100%; /* Zajistí, že inputy vyplní celou šířku */
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Modré zvýraznění při zaměření */
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  width: 100%; /* Tlačítko vyplní celou šířku pro konzistentní vzhled */
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+/* Zlepšení kontaktní sekce */
+.contact-highlight {
+  border-left: 5px solid #007bff;
+  padding: 10px 15px;
+  background-color: #f1f8ff;
+  margin: 20px 0 0 0; /* Mezera pouze nahoře, aby se zarovnalo s formulářem */
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+/* Responzivní úpravy */
+@media (max-width: 768px) {
+  .modern-columns {
+      flex-direction: column; /* Sloupce se na mobilu zobrazí pod sebou */
   }
-  
-  .hero .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5); /* Creates a dark overlay */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+
+  .modern-container {
+      margin-bottom: 20px; /* Mezera mezi sloupci na mobilních zařízeních */
   }
-  
-  .hero .overlay h1 {
-    color: #fff;
-    font-size: 2.5rem;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-    margin: 0;
-  }
-  
-  /* ======= Detail Card Style ======= */
-  .detail-card {
-    margin: 20px auto;
-    max-width: 800px;
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    overflow: hidden;
-  }
-  
-  .detail-card-header {
-    background-color: #007bff;
-    color: #fff;
-    padding: 20px;
-    font-size: 1.75rem;
-    font-weight: 700;
-  }
-  
-  .detail-card-body {
-    padding: 20px;
-  }
-  
-  .detail-card-body h1 {
-    margin-bottom: 20px;
-    font-size: 2rem;
-    color: #333;
-  }
-  
-  .detail-card-body p {
-    line-height: 1.6;
-    font-size: 1rem;
-    color: #555;
-    margin-bottom: 1rem;
-  }
-  
-  .detail-card-body p strong {
-    color: #000;
-  }
-  
-  /* ======= Registration Form Styling ======= */
-  .form-group {
-    margin-bottom: 1rem;
-  }
-  
-  form label {
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    display: inline-block;
-  }
-  
-  form .form-control {
-    border-radius: 4px;
-    padding: 0.5rem;
-    border: 1px solid #ced4da;
-  }
-  
+
   .btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
+      width: auto; /* Na mobilu tlačítko nemusí být plné šířky */
   }
-  
-  /* ======= Detail Card Footer (Optional) ======= */
-  .detail-card-footer {
-    background: #f8f9fa;
-    padding: 15px 20px;
-    text-align: right;
-    font-size: 0.9rem;
+
+  .contact-container .big-phone {
+      font-size: 2rem; /* Menší velikost telefonního čísla na mobilu */
   }
-  
+}

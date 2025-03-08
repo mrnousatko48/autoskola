@@ -22,42 +22,53 @@
       </p>
       <p><strong>Cena kurzu:</strong> {$course->price} Kč</p>
 
-    <p>
-      Pro zápis do kurzu je třeba přinést vyplněnou a od lékaře potvrzenou žádost a zálohu, 
-      nebo celou částku kurzovného.
-    </p>
-    <p>Přijímáme rezervace již nyní s platbou až při zahájení kurzu.</p>
+      <!-- Popis kurzu -->
+      <p>
+        Tento kurz nabízí komplexní výuku zaměřenou na bezpečnost a praktické dovednosti.
+        Dozvíte se všechny potřebné informace a techniky pro úspěšné absolvování, přičemž
+        klademe důraz na individuální přístup a moderní metody výuky.
+      </p>
 
-    <form action="/register" method="post">
-        <div class="form-group">
-            <label for="name">Jméno:</label>
-            <input type="text" class="form-control" id="name" name="name" required>
-        </div>
-        <div class="form-group">
-            <label for="address">Adresa:</label>
-            <input type="text" class="form-control" id="address" name="address" required>
-        </div>
-        <div class="form-group">
-            <label for="email">E-mail:</label>
-            <input type="email" class="form-control" id="email" name="email" required>
-        </div>
-        <div class="form-group">
-            <label for="phone">Telefon:</label>
-            <input type="tel" class="form-control" id="phone" name="phone" required>
-        </div>
-        <div class="form-group">
-            <label for="message">Zpráva:</label>
-            <textarea class="form-control" id="message" name="message"></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Zaregistrovat se</button>
-    </form>
-    <p>
-      Nebo nás kontaktujte přímo na: 
-      <a href="mailto:autoskolaprima@email.cz">
-      autoskolaprima@email.cz</a> 
-      nebo tel. <a href="tel:737314477">737 314 477</a>. 
-      Doporučujeme si místo v kurzu rezervovat telefonicky.
-    </p>
-    <p>Těšíme se na Vás v naší autoškole!</p>
-</div>
+      <!-- Dva sloupce: formulář a kontaktní informace -->
+      <div class="row modern-columns">
+          <!-- Sloupec s formulářem -->
+          <div class="col-md-8">
+              <div class="modern-container">
+                  <h3>Přihláška na kurz</h3>
+                  {form registrationForm}
+                      <div class="form-group">
+                          <label for="name">Jméno:</label>
+                          {input name}
+                      </div>
+                      <div class="form-group">
+                          <label for="address">Adresa:</label>
+                          {input address}
+                      </div>
+                      <div class="form-group">
+                          <label for="email">E-mail:</label>
+                          {input email}
+                      </div>
+                      <div class="form-group">
+                          <label for="phone">Telefon:</label>
+                          {input phone}
+                      </div>
+                      {input submit}
+                  {/form}
+                  <p class="contact-highlight">
+                      Doporučujeme si místo v kurzu rezervovat telefonicky.
+                  </p>
+              </div>
+          </div>
+          <!-- Sloupec s kontaktními informacemi -->
+          <div class="col-md-4">
+              <div class="modern-container contact-container">
+                  <h3>Nebo nás kontaktujte</h3>
+                  <p class="big-phone">
+                      tel. <a href="tel:737314477">737 314 477</a>
+                  </p>
+                  <p class="small-text">Těšíme se na Vás v naší autoškole!</p>
+              </div>
+          </div>
+      </div>
+  </div>
 {/block}

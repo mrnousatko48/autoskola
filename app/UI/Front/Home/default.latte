@@ -8,7 +8,7 @@
       <h2 class="text-center mb-4">{$about->heading}</h2>
       <div class="row align-items-center">
         <div class="col-md-6">
-          <img src="{$about->image}" alt="{$about->alt_text}" class="img-fluid rounded" loading="lazy">
+          <img src="{$about->image}" alt="{$about->alt_text}" class="img-fluid rounded" loading="lazy" style="max-width: 100%;">
         </div>
         <div class="col-md-6">
           <p>{$about->content}</p>
@@ -130,9 +130,9 @@
             <div class="card-body">
               <h5 class="card-title">{$course->name}</h5>
               <p class="card-text">{$course->description}</p>
-              <a href="{link 'detail', id => $course->id}" class="btn btn-primary">
-                Zjistit více
-              </a>
+                <a href="{link 'detail', courseId => $course->id}" class="btn btn-primary">
+                    Zjistit více
+                </a>
             </div>
           </div>
         </div>
@@ -159,7 +159,7 @@
           <div class="contact-info p-4 bg-white shadow-sm rounded">
             <p><strong>{$contact->name}</strong></p>
             <p><i class="fas fa-map-marker-alt me-2"></i><strong>Adresa:</strong> {$contact->address}</p>
-            <p><strong>IČO:</strong> {$contact->ico}</p>
+            <p><i class="fas fa-id-card me-2"></i><strong>IČO:</strong> {$contact->ico}</p>
             <p><i class="fas fa-mobile-alt me-2"></i><strong>Mobil:</strong> <a href="tel:+{$contact->phone|replace: ' ', ''}">{$contact->phone}</a></p>
             <p><i class="fas fa-envelope me-2"></i><strong>Email:</strong> <a href="mailto:{$contact->email}">{$contact->email}</a></p>
           </div>
@@ -172,5 +172,4 @@
       </div>
     </div>
   </section>
-  <script src="/js/chat.js"></script>
 {/block}

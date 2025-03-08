@@ -267,23 +267,48 @@ public function createComponentOfferForm(): Form
      * @return Form
      */
     public function createComponentAboutForm(): Form
-    {
-        $about = $this->pageFacade->getAboutSection();
-        $fields = [
-            'heading'  => ['type' => 'text', 'label' => 'Heading:', 'required' => true],
-            'image'    => ['type' => 'text', 'label' => 'Image URL:', 'required' => true],
-            'alt_text' => ['type' => 'text', 'label' => 'Alt Text:', 'required' => true],
-            'content'  => ['type' => 'textArea', 'label' => 'Content:', 'required' => true],
-        ];
+{
+    $about = $this->pageFacade->getAboutSection();
+    $fields = [
+        'heading'  => ['type' => 'text', 'label' => 'Heading:', 'required' => true],
+        // Remove the text field for image since we’ll use a file upload instead.
+        'alt_text' => ['type' => 'text', 'label' => 'Alt Text:', 'required' => true],
+        'content'  => ['type' => 'textArea', 'label' => 'Content:', 'required' => true],
+    ];
 
-        return $this->createEditForm(
-            $about,
-            $fields,
-            fn($id, $values) => $this->pageFacade->updateAboutSection($id, $values),
-            'About section updated successfully.',
-            'Dashboard:about'
-        );
+    $form = $this->createEditForm(
+        $about,
+        $fields,
+        function ($id, $values) use ($about) {
+            /** @var \Nette\Http\FileUpload $image */
+            $image = $values['image'];
+            // Use the ImageUploader helper to process the file upload.
+            // It will return a path like "/uploads/about/uniqueName.png"
+            $values['image'] = \App\Utils\ImageUploader::uploadImage($image, 'uploads/about', $about->image);
+            $this->pageFacade->updateAboutSection($id, $values);
+        },
+        'About section updated successfully.',
+        'Dashboard:about'
+    );
+
+    $form->addHidden('id')->setDefaultValue($about->id);
+
+    // Remove any existing image field and add a file upload control
+    if ($form->getComponent('image', false)) {
+        $form->removeComponent($form['image']);
     }
+    $form->addUpload('image', 'Image:')
+         ->setHtmlAttribute('class', 'form-control');
+
+    // Set the form to support file uploads
+    $form->getElementPrototype()->enctype = 'multipart/form-data';
+
+    // Ensure the form action preserves the about section ID
+    $form->setAction($this->link('Dashboard:about', ['id' => $about->id]));
+
+    return $form;
+}
+
 
     /**
      * Create a form to edit the Contact Section.
@@ -400,37 +425,63 @@ public function createComponentOfferForm(): Form
         if (!$course) {
             $this->error('Course not found');
         }
+        
         $fields = [
-            'name'        => ['type' => 'text',     'label' => 'Název Kurzu',    'required' => true],
-            'description' => ['type' => 'textArea', 'label' => 'Popis:',    'required' => true],
-            'image'       => ['type' => 'text',     'label' => 'Obrázek:',      'required' => true],
-            'price'       => ['type' => 'text',     'label' => 'Cena:',          'required' => true],
-            'location'    => ['type' => 'text',     'label' => 'Adresa:',       'required' => true],
+            'name'        => ['type' => 'text',     'label' => 'Název Kurzu', 'required' => true],
+            'description' => ['type' => 'textArea', 'label' => 'Popis:',      'required' => true],
+            'price'       => ['type' => 'text',     'label' => 'Cena:',       'required' => true],
+            'location'    => ['type' => 'text',     'label' => 'Adresa:',     'required' => true],
             'start_date'  => ['type' => 'text',     'label' => 'Začíná:',     'required' => true, 'htmlType' => 'date'],
         ];
-    
+        
         $form = $this->createEditForm(
             $course,
             $fields,
-            function ($submittedId, $values) {
+            function ($submittedId, $values) use ($course) {
+                /** @var \Nette\Http\FileUpload $image */
+                $image = $values['image'];
+                // If a valid new image was uploaded, use its path; otherwise keep the existing course image.
+                $values['image'] = \App\Utils\ImageUploader::uploadImage($image, 'uploads/courses', $course->image);
                 $courseId = (int)$values['id'];
                 $this->pageFacade->updateCourse($courseId, (array)$values);
             },
             'Course updated successfully.',
             'Dashboard:courses'
         );
+        
+        // Add hidden field for course ID
         $form->addHidden('id')->setDefaultValue($course->id);
-    
-        // Preload the date in the format HTML date input requires (YYYY-MM-DD)
+        
+        // Preload date field in HTML date format
         if ($course->start_date instanceof \DateTimeInterface) {
             $form->getComponent('start_date')->setDefaultValue($course->start_date->format('Y-m-d'));
         }
         
-        // Ensure the course ID remains in the URL when the form is submitted
+        // Remove any pre‑existing "image" field if it exists, and add a file upload control.
+        if ($form->getComponent('image', false)) {
+            $form->removeComponent($form['image']);
+        }
+        $form->addUpload('image', 'Obrázek:')
+             ->setHtmlAttribute('class', 'form-control');
+        
+        // Set the encoding type for file uploads.
+        $form->getElementPrototype()->enctype = 'multipart/form-data';
+        
+        // Remove the existing submit button (added via createEditForm)
+        if ($form->getComponent('save', false)) {
+            $form->removeComponent($form['save']);
+        }
+        // Add a new submit button positioned after the upload control.
+        $form->addSubmit('save', 'Uložit')
+             ->getControlPrototype()->addClass('btn btn-primary');
+        
+        // Ensure the course ID remains in the URL upon submission.
         $form->setAction($this->link('Dashboard:courses', ['id' => $course->id]));
         
         return $form;
     }
+
+    
 
 public function actionDeleteUser(int $id): void
 {
