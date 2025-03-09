@@ -94,29 +94,42 @@ final class HomePresenter extends Nette\Application\UI\Presenter
     }
 
     public function registrationFormSucceded(Form $form, $data)
-    {
-        bdump($data);
+{
+    try {
+        // Příprava dat pro vložení do databáze
+        $registrationData = [
+            'name'      => $data->name,
+            'address'   => $data->address,
+            'email'     => $data->email,
+            'phone'     => $data->phone,
+            'course_id' => $this->course->id,
+        ];
+
+        // Vložení registrace do databáze
+        $this->registrationFacade->createRegistration($registrationData);
+
+        // Odeslání notifikačního emailu administrátorovi
         $this->mailSender->sendRegistrationEmail(
-            'burdadko.cz@gmail.com', // Admin email
+            'burdadko.cz@gmail.com',
+            $data->email,
             $data->name,
             $this->course->name,
-            "Adresa: " . $data->address . "\nTelefon: " . $data->phone . "\nDatum registrace: " . date('d.m.Y H:i')
+            $data->address,
+            $data->phone,
+            date('d.m.Y H:i')
         );
 
+        // Zpráva o úspěchu a přesměrování
         $this->flashMessage('Registrace byla úspěšně odeslána a email byl odeslán administrátorovi!', 'success');
         $this->redirect('this');
+    } catch (\Exception $e) {
+        // Pokud je výjimka typu AbortException, přehodíme ji, aby ji zpracoval Nette
+        if ($e instanceof \Nette\Application\AbortException) {
+            throw $e;
+        }
+        // Zachycení ostatních výjimek (např. databázových nebo emailových chyb)
+        $this->flashMessage('Registrace se nepodařila. Zkuste to prosím znovu.', 'danger');
+        bdump($e->getMessage()); // Logování chyby pro ladění
     }
-
-    public function handleSendEmail(): void
-    {
-        $this->mailSender->sendRegistrationEmail(
-            'burdadko.cczz@seznam.cz',
-            'Test User',
-            'Test Course',
-            'Testovací registrace'
-        );
-
-        $this->flashMessage('Email byl odeslán!', 'success');
-        $this->redirect('this');
-    }
+}
 }

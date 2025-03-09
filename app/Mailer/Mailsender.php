@@ -1,10 +1,8 @@
 <?php
-
 namespace App\MailSender;
 
 use Nette\Mail\Message;
 use Nette\Mail\Mailer;
-use Nette\Mail\SmtpMailer;
 use Latte\Engine;
 
 class MailSender
@@ -13,47 +11,53 @@ class MailSender
         private Mailer $mailer
     ) {}
 
-    public function createNotificationEmail(string $name): Message
-    {
+    public function createRegistrationEmail(
+        string $adminEmail,
+        string $userEmail,
+        string $name,
+        string $courseName,
+        string $address,
+        string $phone,
+        string $registrationDate
+    ): Message {
         $latte = new Engine();
         $params = [
+            'userEmail' => $userEmail,
             'name' => $name,
-            'content' => 'Default notification content.', // Will be overridden by registration data
-        ];
-        $html = $latte->renderToString(__DIR__ . '/registrationNotification.latte', $params);
-
-        $mail = new Message;
-        $mail->setFrom('burdadko.cczz@seznam.cz')
-             ->addTo('burdadko.cczz@seznam.cz')
-             ->setSubject('Notification Email')
-             ->setHtmlBody($html);
-
-        return $mail;
-    }
-
-    public function createRegistrationEmail(string $email, string $name, string $courseName, string $details): Message
-    {
-        $latte = new Engine();
-        $params = [
-            'email' => $email,
-            'name' => $name,
-            'content' => $details, // Use details as content for registration
             'courseName' => $courseName,
+            'address' => $address,
+            'phone' => $phone,
+            'registrationDate' => $registrationDate,
         ];
         $html = $latte->renderToString(__DIR__ . '/email.latte', $params);
 
         $mail = new Message;
         $mail->setFrom('burdadko.cczz@seznam.cz')
-             ->addTo($email)
+             ->addTo($adminEmail)
              ->setSubject('Nová registrace na kurz: ' . $courseName)
              ->setHtmlBody($html);
 
         return $mail;
     }
 
-    public function sendRegistrationEmail(string $email, string $name, string $courseName, string $details): void
-    {
-        $mail = $this->createRegistrationEmail($email, $name, $courseName, $details);
+    public function sendRegistrationEmail(
+        string $adminEmail,
+        string $userEmail,
+        string $name,
+        string $courseName,
+        string $address,
+        string $phone,
+        string $registrationDate
+    ): void {
+        $mail = $this->createRegistrationEmail(
+            $adminEmail,
+            $userEmail,
+            $name,
+            $courseName,
+            $address,
+            $phone,
+            $registrationDate
+        );
         $this->mailer->send($mail);
     }
 }
