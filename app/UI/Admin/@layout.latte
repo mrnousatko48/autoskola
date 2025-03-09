@@ -15,20 +15,19 @@
 </head>
 <body>
     <!-- Navbar -->
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-  <div class="container">
-    <a class="navbar-brand" n:href=":Front:Home:default">Autoškola PRIMA</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" n:href=":Front:Home:default">Domů</a></li>
-        <li class="nav-item"><a class="nav-link" n:href=":Admin:Dashboard:user">Správci</a></li>
-        <li class="nav-item"><a class="nav-link" n:href=":Admin:Dashboard:registrations">Registrace</a></li>
-      </ul>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+      <div class="container">
+        <a class="navbar-brand" n:href=":Front:Home:default">Autoškola PRIMA</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Přepnout navigaci">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" n:href=":Front:Home:default">Domů</a></li>
+            <li class="nav-item"><a class="nav-link" n:href=":Admin:Dashboard:user">Správci</a></li>
+            <li class="nav-item"><a class="nav-link" n:href=":Admin:Dashboard:registrations">Registrace</a></li>
+          </ul>
           <!-- Dropdown for logged-in user -->
           <div n:if="$user->isLoggedIn()" class="ms-3">
             <div class="dropdown">
@@ -44,10 +43,15 @@
         </div>
       </div>
     </nav>
-    </div>
-  </div>
-</nav>
 
+    {if $flashes}
+      {foreach $flashes as $flash}
+        <div class="alert alert-{$flash->type} alert-dismissible fade show" role="alert">
+          {$flash->message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zavřít"></button>
+        </div>
+      {/foreach}
+    {/if}
 
     <!-- Main Content -->
     <main class="container mt-5">

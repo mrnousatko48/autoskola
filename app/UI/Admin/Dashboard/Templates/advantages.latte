@@ -3,7 +3,7 @@
     {if $presenter->getParameter('id')}
       <div class="card">
         <div class="card-header bg-primary text-white">
-          <h3 class="mb-0">Edit Advantage</h3>
+          <h3 class="mb-0">Upravit výhodu</h3>
         </div>
         <div class="card-body">
           {control advantageForm}
@@ -15,16 +15,16 @@
     {else}
       <h1>Výhody</h1>
       <p>
-      <a href="{link Dashboard:default}" class="btn btn-secondary">← Back to Dashboard</a>
-      <!-- Optionally, add a "New Course" button here -->
+      <a href="{link Dashboard:default}" class="btn btn-secondary">← Zpět na Nástěnku</a>
+      <!-- Volitelně zde můžete přidat tlačítko "Nová výhoda" -->
       </p>
       <table class="table table-bordered">
         <thead>
           <tr>
-            <th>Icon</th>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Edit</th>
+            <th>Ikona</th>
+            <th>Název</th>
+            <th>Popis</th>
+            <th>Upravit</th>
           </tr>
         </thead>
         <tbody>
@@ -34,8 +34,8 @@
               <td>{$adv->title}</td>
               <td>{$adv->description}</td>
               <td>
-                <!-- This link sets the id parameter so the template enters edit mode -->
-                <a href="{link Dashboard:advantages, id => $adv->id}" class="btn btn-sm btn-primary">Edit</a>
+                <!-- Tento odkaz nastaví parametr id, aby šablona přešla do režimu úprav -->
+                <a href="{link Dashboard:advantages, id => $adv->id}" class="btn btn-sm btn-primary">Upravit</a>
               </td>
             </tr>
           {/foreach}

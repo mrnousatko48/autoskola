@@ -1,7 +1,7 @@
 {block content}
   <div class="container mt-5">
     {if isset($price)}
-      <h1 class="mb-4 text-center">Edit Price</h1>
+      <h1 class="mb-4 text-center">Upravit cenu</h1>
       <div class="row justify-content-center">
         <div class="col-md-8">
           <div class="card">
@@ -10,14 +10,14 @@
             </div>
           </div>
           <p class="mt-3 text-center">
-            <a href="{link Dashboard:prices}" class="btn btn-secondary">← Back to Price List</a>
+            <a href="{link Dashboard:prices}" class="btn btn-secondary">← Zpět na ceník</a>
           </p>
         </div>
       </div>
     {else}
-      <h1 class="mb-4 text-center">Course Prices</h1>
+      <h1 class="mb-4 text-center">Ceny kurzů</h1>
       <p class="text-center">
-        <a href="{link Dashboard:default}" class="btn btn-secondary">← Back to Dashboard</a>
+        <a href="{link Dashboard:default}" class="btn btn-secondary">← Zpět na Nástěnku</a>
       </p>
       {var $headers = [
         'public'       => 'Cena pro veřejnost a studenty',
@@ -30,10 +30,10 @@
         <table class="table table-bordered">
           <thead>
             <tr>
-              <th>Item</th>
-              <th>Price</th>
-              <th>Description</th>
-              <th>Edit</th>
+              <th>Položka</th>
+              <th>Cena</th>
+              <th>Popis</th>
+              <th>Upravit</th>
             </tr>
           </thead>
           <tbody>
@@ -43,7 +43,7 @@
                 <td>{$p->price}</td>
                 <td>{$p->description}</td>
                 <td>
-                  <a href="{link Dashboard:prices, id => $p->id}" class="btn btn-sm btn-primary">Edit</a>
+                  <a href="{link Dashboard:prices, id => $p->id}" class="btn btn-sm btn-primary">Upravit</a>
                 </td>
               </tr>
             {/foreach}

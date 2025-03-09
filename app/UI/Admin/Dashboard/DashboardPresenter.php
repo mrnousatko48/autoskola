@@ -36,7 +36,7 @@ final class DashboardPresenter extends Presenter
     {
         parent::startup();
         if (!$this->user->isLoggedIn() || !$this->user->isInRole('admin')) {
-            $this->flashMessage('sem nemáš přístup🚫', 'danger');
+            $this->flashMessage('Sem nemáš přístup🚫', 'danger');
             $this->redirect(':Front:Home:default');
         }
     }
@@ -80,11 +80,10 @@ final class DashboardPresenter extends Presenter
     }
 
     public function renderRegistrations(): void
-        {
-            $registrations = $this->registrationFacade->getRegistrations();
-            $this->template->registrations = $registrations;
-        }
-
+    {
+        $registrations = $this->registrationFacade->getRegistrations();
+        $this->template->registrations = $registrations;
+    }
 
     public function renderAdvantages(): void
     {
@@ -143,8 +142,8 @@ final class DashboardPresenter extends Presenter
      * @param array    $fields              Array of field definitions.
      *                                    Example:
      *                                    [
-     *                                      'heading' => ['type' => 'text', 'label' => 'Heading:', 'required' => true],
-     *                                      'subheading'  => ['type' => 'textArea', 'label' => 'Subheading:', 'required' => true],
+     *                                      'heading' => ['type' => 'text', 'label' => 'Nadpis:', 'required' => true],
+     *                                      'subheading'  => ['type' => 'textArea', 'label' => 'Podnadpis:', 'required' => true],
      *                                    ]
      * @param callable $updateCallback      Callback to update the entity: fn($id, $values)
      * @param string   $flashMessage        The flash message on success.
@@ -197,49 +196,47 @@ final class DashboardPresenter extends Presenter
     
         return $form;
     }
+
     /**
- * Create a form to edit an Offering.
- *
- * @return Form
- */
-public function createComponentOfferForm(): Form
-{
-    $id = (int)$this->getParameter('id');
-    if (!$id) {
-        $this->error('Offer not found');
+     * Create a form to edit an Offering.
+     *
+     * @return Form
+     */
+    public function createComponentOfferForm(): Form
+    {
+        $id = (int)$this->getParameter('id');
+        if (!$id) {
+            $this->error('Nabídka nenalezena');
+        }
+        $offer = $this->pageFacade->getOfferById($id);
+        if (!$offer) {
+            $this->error('Nabídka nenalezena');
+        }
+        $fields = [
+            'label'   => ['type' => 'text',     'label' => 'Označení:', 'required' => true],
+            'content' => ['type' => 'textArea', 'label' => 'Obsah:',    'required' => true],
+        ];
+
+        $form = $this->createEditForm(
+            $offer,
+            $fields,
+            function ($submittedId, $values) {
+                $offerId = (int)$values['id'];
+                $this->pageFacade->updateOffer($offerId, (array)$values);
+            },
+            'Nabídka byla úspěšně aktualizována.',
+            'Dashboard:offerings'
+        );
+
+        // Add a hidden field for the offer ID
+        $form->addHidden('id')->setDefaultValue($offer->id);
+
+        // Set the form action so that the ID remains in the URL upon submission
+        $form->setAction($this->link('Dashboard:offerings', ['id' => $offer->id]));
+
+        return $form;
     }
-    $offer = $this->pageFacade->getOfferById($id);
-    if (!$offer) {
-        $this->error('Offer not found');
-    }
-    $fields = [
-        'label'   => ['type' => 'text',     'label' => 'Label:',   'required' => true],
-        'content' => ['type' => 'textArea', 'label' => 'Content:', 'required' => true],
-    ];
-
-    $form = $this->createEditForm(
-        $offer,
-        $fields,
-        function ($submittedId, $values) {
-            $offerId = (int)$values['id'];
-            $this->pageFacade->updateOffer($offerId, (array)$values);
-        },
-        'Offer updated successfully.',
-        'Dashboard:offerings'
-    );
-
-    // Add a hidden field for the offer ID
-    $form->addHidden('id')->setDefaultValue($offer->id);
-
-    // Set the form action so that the ID remains in the URL upon submission
-    $form->setAction($this->link('Dashboard:offerings', ['id' => $offer->id]));
-
-    return $form;
-}
     
-    
-    
-
     /**
      * Create a form to edit the Hero Section.
      *
@@ -249,17 +246,17 @@ public function createComponentOfferForm(): Form
     {
         $hero = $this->pageFacade->getHeroSection();
         $fields = [
-            'heading'     => ['type' => 'text', 'label' => 'Heading:', 'required' => true],
-            'subheading'  => ['type' => 'textArea', 'label' => 'Subheading:', 'required' => true],
-            'button_text' => ['type' => 'text', 'label' => 'Button Text:', 'required' => true],
-            'button_link' => ['type' => 'text', 'label' => 'Button Link:', 'required' => true],
+            'heading'     => ['type' => 'text',     'label' => 'Nadpis:',       'required' => true],
+            'subheading'  => ['type' => 'textArea', 'label' => 'Podnadpis:',    'required' => true],
+            'button_text' => ['type' => 'text',     'label' => 'Text tlačítka:', 'required' => true],
+            'button_link' => ['type' => 'text',     'label' => 'Odkaz tlačítka:', 'required' => true],
         ];
 
         return $this->createEditForm(
             $hero,
             $fields,
             fn($id, $values) => $this->pageFacade->updateHeroSection($id, $values),
-            'Hero section updated successfully.',
+            'Hlavní sekce byla úspěšně aktualizována.',
             'Dashboard:hero'
         );
     }
@@ -270,48 +267,41 @@ public function createComponentOfferForm(): Form
      * @return Form
      */
     public function createComponentAboutForm(): Form
-{
-    $about = $this->pageFacade->getAboutSection();
-    $fields = [
-        'heading'  => ['type' => 'text', 'label' => 'Heading:', 'required' => true],
-        // Remove the text field for image since we’ll use a file upload instead.
-        'alt_text' => ['type' => 'text', 'label' => 'Alt Text:', 'required' => true],
-        'content'  => ['type' => 'textArea', 'label' => 'Content:', 'required' => true],
-    ];
+    {
+        $about = $this->pageFacade->getAboutSection();
+        $fields = [
+            'heading'  => ['type' => 'text',     'label' => 'Nadpis:', 'required' => true],
+            'alt_text' => ['type' => 'text',     'label' => 'Alternativní text:', 'required' => true],
+            'content'  => ['type' => 'textArea', 'label' => 'Obsah:',  'required' => true],
+        ];
 
-    $form = $this->createEditForm(
-        $about,
-        $fields,
-        function ($id, $values) use ($about) {
-            /** @var \Nette\Http\FileUpload $image */
-            $image = $values['image'];
-            // Use the ImageUploader helper to process the file upload.
-            // It will return a path like "/uploads/about/uniqueName.png"
-            $values['image'] = \App\Utils\ImageUploader::uploadImage($image, 'uploads/about', $about->image);
-            $this->pageFacade->updateAboutSection($id, $values);
-        },
-        'About section updated successfully.',
-        'Dashboard:about'
-    );
+        $form = $this->createEditForm(
+            $about,
+            $fields,
+            function ($id, $values) use ($about) {
+                /** @var \Nette\Http\FileUpload $image */
+                $image = $values['image'];
+                $values['image'] = \App\Utils\ImageUploader::uploadImage($image, 'uploads/about', $about->image);
+                $this->pageFacade->updateAboutSection($id, $values);
+            },
+            'Sekce O nás byla úspěšně aktualizována.',
+            'Dashboard:about'
+        );
 
-    $form->addHidden('id')->setDefaultValue($about->id);
+        $form->addHidden('id')->setDefaultValue($about->id);
 
-    // Remove any existing image field and add a file upload control
-    if ($form->getComponent('image', false)) {
-        $form->removeComponent($form['image']);
+        if ($form->getComponent('image', false)) {
+            $form->removeComponent($form['image']);
+        }
+        $form->addUpload('image', 'Obrázek:')
+             ->setHtmlAttribute('class', 'form-control');
+
+        $form->getElementPrototype()->enctype = 'multipart/form-data';
+
+        $form->setAction($this->link('Dashboard:about', ['id' => $about->id]));
+
+        return $form;
     }
-    $form->addUpload('image', 'Image:')
-         ->setHtmlAttribute('class', 'form-control');
-
-    // Set the form to support file uploads
-    $form->getElementPrototype()->enctype = 'multipart/form-data';
-
-    // Ensure the form action preserves the about section ID
-    $form->setAction($this->link('Dashboard:about', ['id' => $about->id]));
-
-    return $form;
-}
-
 
     /**
      * Create a form to edit the Contact Section.
@@ -322,19 +312,19 @@ public function createComponentOfferForm(): Form
     {
         $contact = $this->pageFacade->getContactInfo();
         $fields = [
-            'name'      => ['type' => 'text', 'label' => 'Name:', 'required' => true],
-            'address'   => ['type' => 'text', 'label' => 'Address:', 'required' => true],
-            'ico'       => ['type' => 'text', 'label' => 'IČO:', 'required' => true],
-            'phone'     => ['type' => 'text', 'label' => 'Phone:', 'required' => true],
-            'email'     => ['type' => 'text', 'label' => 'Email:', 'required' => true],
-            'map_embed' => ['type' => 'textArea', 'label' => 'Map Embed Code:', 'required' => true],
+            'name'      => ['type' => 'text',     'label' => 'Jméno:',      'required' => true],
+            'address'   => ['type' => 'text',     'label' => 'Adresa:',     'required' => true],
+            'ico'       => ['type' => 'text',     'label' => 'IČO:',        'required' => true],
+            'phone'     => ['type' => 'text',     'label' => 'Telefon:',    'required' => true],
+            'email'     => ['type' => 'text',     'label' => 'Email:',      'required' => true],
+            'map_embed' => ['type' => 'textArea', 'label' => 'Kód vložení mapy:', 'required' => true],
         ];
 
         return $this->createEditForm(
             $contact,
             $fields,
             fn($id, $values) => $this->pageFacade->updateContactInfo($id, $values),
-            'Contact information updated successfully.',
+            'Kontaktní informace byly úspěšně aktualizovány.',
             'Dashboard:contact'
         );
     }
@@ -351,26 +341,24 @@ public function createComponentOfferForm(): Form
         $id = (int)$this->getParameter('id');
         $advantage = $this->pageFacade->getAdvantages()->get($id);
         if (!$advantage) {
-            $this->error('Advantage not found');
+            $this->error('Výhoda nenalezena');
         }
         $fields = [
-            'icon'        => ['type' => 'text',     'label' => 'Icon:',        'required' => true],
-            'title'       => ['type' => 'text',     'label' => 'Title:',       'required' => true],
-            'description' => ['type' => 'textArea', 'label' => 'Description:', 'required' => true],
+            'icon'        => ['type' => 'text',     'label' => 'Ikona:',       'required' => true],
+            'title'       => ['type' => 'text',     'label' => 'Název:',      'required' => true],
+            'description' => ['type' => 'textArea', 'label' => 'Popis:',       'required' => true],
         ];
     
         $form = $this->createEditForm(
             $advantage,
             $fields,
             fn($id, $values) => $this->pageFacade->updateAdvantage($id, $values),
-            'Advantage updated successfully.',
+            'Výhoda byla úspěšně aktualizována.',
             'Dashboard:advantages'
         );
     
-        // Add a hidden field for the advantage ID
         $form->addHidden('id')->setDefaultValue($advantage->id);
     
-        // Ensure the advantage ID remains in the URL upon submission
         $form->setAction($this->link('Dashboard:advantages', ['id' => $advantage->id]));
     
         return $form;
@@ -388,118 +376,105 @@ public function createComponentOfferForm(): Form
         $id = (int)$this->getParameter('id');
         $price = $this->pageFacade->getPriceById($id);
         if (!$price) {
-            $this->error('Price not found');
+            $this->error('Cena nenalezena');
         }
         $fields = [
-            'item'        => ['type' => 'text', 'label' => 'Item:', 'required' => true],
-            'price'       => ['type' => 'text', 'label' => 'Price:', 'required' => true],
-            'description' => ['type' => 'textArea', 'label' => 'Description:'],
-            'section'     => ['type' => 'hidden', 'label' => ''],
+            'item'        => ['type' => 'text',     'label' => 'Položka:',    'required' => true],
+            'price'       => ['type' => 'text',     'label' => 'Cena:',       'required' => true],
+            'description' => ['type' => 'textArea', 'label' => 'Popis:'],
+            'section'     => ['type' => 'hidden',   'label' => ''],
         ];
     
         $form = $this->createEditForm(
             $price,
             $fields,
             fn($id, $values) => $this->pageFacade->updatePrice($id, $values),
-            'Price updated successfully.',
+            'Cena byla úspěšně aktualizována.',
             'Dashboard:prices'
         );
         
-        // Add a hidden field for the price ID
         $form->addHidden('id')->setDefaultValue($price->id);
         
-        // Set the form action so that the ID remains in the URL upon submission
         $form->setAction($this->link('Dashboard:prices', ['id' => $price->id]));
         
         return $form;
     }
+
     /**
      * Create a form to edit a Course.
      *
      * @return Form
      */
     public function createComponentCourseForm(): Form
-{
-    $id = $this->getParameter('id');
-    if (!$id) {
-        $this->error('Course not found');
+    {
+        $id = $this->getParameter('id');
+        if (!$id) {
+            $this->error('Kurz nenalezen');
+        }
+        $course = $this->pageFacade->getCourseById((int)$id);
+        if (!$course) {
+            $this->error('Kurz nenalezen');
+        }
+        
+        $fields = [
+            'name'        => ['type' => 'text',     'label' => 'Název kurzu:', 'required' => true],
+            'description' => ['type' => 'textArea', 'label' => 'Popis:',        'required' => true],
+            'price'       => ['type' => 'text',     'label' => 'Cena:',         'required' => true],
+            'location'    => ['type' => 'text',     'label' => 'Adresa:',       'required' => true],
+            'start_date'  => ['type' => 'text',     'label' => 'Začíná:',       'required' => true, 'htmlType' => 'date'],
+        ];
+    
+        $form = $this->createEditForm(
+            $course,
+            $fields,
+            function ($submittedId, $values) use ($course) {
+                /** @var \Nette\Http\FileUpload $image */
+                $image = $values['image'];
+                $values['image'] = \App\Utils\ImageUploader::uploadImage($image, 'uploads/courses', $course->image);
+                $values['show_ribbon'] = $values['show_ribbon'];
+                $courseId = (int)$values['id'];
+                $this->pageFacade->updateCourse($courseId, (array)$values);
+            },
+            'Kurz byl úspěšně aktualizován.',
+            'Dashboard:courses'
+        );
+    
+        $form->addHidden('id')->setDefaultValue($course->id);
+    
+        if ($course->start_date instanceof \DateTimeInterface) {
+            $form->getComponent('start_date')->setDefaultValue($course->start_date->format('Y-m-d'));
+        }
+    
+        if ($form->getComponent('image', false)) {
+            $form->removeComponent($form['image']);
+        }
+        $form->addUpload('image', 'Obrázek:')
+             ->setHtmlAttribute('class', 'form-control');
+    
+        $form->addCheckbox('show_ribbon', 'Zobrazit ribbon')
+             ->setDefaultValue($course->show_ribbon ?? true);
+    
+        $form->getElementPrototype()->enctype = 'multipart/form-data';
+    
+        if ($form->getComponent('save', false)) {
+            $form->removeComponent($form['save']);
+        }
+        $form->addSubmit('save', 'Uložit')
+             ->getControlPrototype()->addClass('btn btn-primary');
+    
+        $form->setAction($this->link('Dashboard:courses', ['id' => $course->id]));
+    
+        return $form;
     }
-    $course = $this->pageFacade->getCourseById((int)$id);
-    if (!$course) {
-        $this->error('Course not found');
-    }
-    
-    $fields = [
-        'name'        => ['type' => 'text',     'label' => 'Název Kurzu', 'required' => true],
-        'description' => ['type' => 'textArea', 'label' => 'Popis:',      'required' => true],
-        'price'       => ['type' => 'text',     'label' => 'Cena:',       'required' => true],
-        'location'    => ['type' => 'text',     'label' => 'Adresa:',     'required' => true],
-        'start_date'  => ['type' => 'text',     'label' => 'Začíná:',     'required' => true, 'htmlType' => 'date'],
-    ];
-    
-    $form = $this->createEditForm(
-        $course,
-        $fields,
-        function ($submittedId, $values) use ($course) {
-            /** @var \Nette\Http\FileUpload $image */
-            $image = $values['image'];
-            $values['image'] = \App\Utils\ImageUploader::uploadImage($image, 'uploads/courses', $course->image);
-            $values['show_ribbon'] = $values['show_ribbon']; // Ensure the ribbon value is included
-            $courseId = (int)$values['id'];
-            $this->pageFacade->updateCourse($courseId, (array)$values);
-        },
-        'Course updated successfully.',
-        'Dashboard:courses'
-    );
-    
-    // Add hidden field for course ID
-    $form->addHidden('id')->setDefaultValue($course->id);
-    
-    // Preload date field in HTML date format
-    if ($course->start_date instanceof \DateTimeInterface) {
-        $form->getComponent('start_date')->setDefaultValue($course->start_date->format('Y-m-d'));
-    }
-    
-    // Remove any pre-existing "image" field if it exists, and add a file upload control
-    if ($form->getComponent('image', false)) {
-        $form->removeComponent($form['image']);
-    }
-    $form->addUpload('image', 'Obrázek:')
-         ->setHtmlAttribute('class', 'form-control');
-    
-    // Add the ribbon toggle checkbox
-    $form->addCheckbox('show_ribbon', 'Zobrazit ribbon')
-         ->setDefaultValue($course->show_ribbon ?? true); // Default to true if not set
-    
-    // Set the encoding type for file uploads
-    $form->getElementPrototype()->enctype = 'multipart/form-data';
-    
-    // Remove the existing submit button (added via createEditForm)
-    if ($form->getComponent('save', false)) {
-        $form->removeComponent($form['save']);
-    }
-    // Add a new submit button
-    $form->addSubmit('save', 'Uložit')
-         ->getControlPrototype()->addClass('btn btn-primary');
-    
-    // Ensure the course ID remains in the URL upon submission
-    $form->setAction($this->link('Dashboard:courses', ['id' => $course->id]));
-    
-    return $form;
-}
 
-    
-
-public function actionDeleteUser(int $id): void
-{
-    if ($this->user->getIdentity()->id === $id) {
-        $this->flashMessage('Nemůžeš odstranit sebe.', 'danger');
+    public function actionDeleteUser(int $id): void
+    {
+        if ($this->user->getIdentity()->id === $id) {
+            $this->flashMessage('Nemůžeš odstranit sebe.', 'danger');
+            $this->redirect('user');
+        }
+        $this->userFacade->deleteUser($id);
+        $this->flashMessage('Uživatel byl úspěšně odstraněn.', 'success');
         $this->redirect('user');
-    }
-    $this->userFacade->deleteUser($id); // Make sure such method exists
-    $this->flashMessage('Uživatel byl úspěšně odstraněn.', 'success');
-    $this->redirect('user');
-} 
-    
-    
+    } 
 }

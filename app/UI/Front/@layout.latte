@@ -24,7 +24,7 @@
       <div class="container">
         <a class="navbar-brand" n:href="Home:default">Autoškola PRIMA</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Přepnout navigaci">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -60,7 +60,7 @@
       {foreach $flashes as $flash}
         <div class="alert alert-{$flash->type} alert-dismissible fade show" role="alert">
           {$flash->message}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zavřít"></button>
         </div>
       {/foreach}
     {/if}

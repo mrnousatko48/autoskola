@@ -2,15 +2,15 @@
   <div class="container mt-5">
     <h1>Správci</h1>
     <p class="lead">Zde můžete spravovat uživatele aplikace.</p>
-        <p class="mt-3 text-center">
-          <a n:href=":Front:Sign:up" class="btn btn-secondary">Přidat Správce</a>
-          <a href="{link Dashboard:default}" class="btn btn-secondary">← Back to Dashboard</a>
-      
+    <p class="mt-3 text-center">
+      <a n:href=":Front:Sign:up" class="btn btn-secondary">Přidat správce</a>
+      <a href="{link Dashboard:default}" class="btn btn-secondary">← Zpět na Nástěnku</a>
+    </p>
 
     {if $presenter->getParameter('id')}
       <div class="card mb-4">
         <div class="card-header bg-primary text-white">
-          <h3 class="mb-0">Editace uživatele</h3>
+          <h3 class="mb-0">Úprava uživatele</h3>
         </div>
         <div class="card-body">
           {control editUserForm}
@@ -38,9 +38,9 @@
             <td>{$userItem->role}</td>
             <td class="text-center">
               {if $presenter->user->getIdentity()->id !== $userItem->id}
-                <a href="{link Dashboard:deleteUser, id => $userItem->id}" class="btn btn-sm btn-danger" onclick="return confirm('Opravdu chcete odstranit tohoto uživatele?');">Delete</a>
+                <a href="{link Dashboard:deleteUser, id => $userItem->id}" class="btn btn-sm btn-danger" onclick="return confirm('Opravdu chcete odstranit tohoto uživatele?');">Smazat</a>
               {else}
-                <span>N/A</span>
+                <span>Není k dispozici</span>
               {/if}
             </td>
           </tr>

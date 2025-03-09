@@ -1,7 +1,5 @@
 {block content}
 
-
-
   <!-- O nás Section -->
   <section id="about" class="about-us py-5">
     <div class="container">
@@ -104,45 +102,44 @@
 
   <hr class="my-5" style="border-color: #ddd;">
 
-<!-- Kurzy Section -->
-<section id="courses" class="courses py-5">
-  <div class="container">
-    <h2 class="text-center mb-5">Naše kurzy</h2>
-    <div class="row justify-content-center">
-      {foreach $courses as $course}
-        <div class="col-md-4 mb-4">
-          <div class="card h-100 position-relative">
+  <!-- Kurzy Section -->
+  <section id="courses" class="courses py-5">
+    <div class="container">
+      <h2 class="text-center mb-5">Naše kurzy</h2>
+      <div class="row justify-content-center">
+        {foreach $courses as $course}
+          <div class="col-md-4 mb-4">
+            <div class="card h-100 position-relative">
             
-            <!-- Ribbon (shown only if show_ribbon is true) -->
-            {if $course->show_ribbon}
-              <div class="ribbon">
-                <span>OD {$course->start_date|date:'j.n.Y'}</span>
+              <!-- Ribbon (shown only if show_ribbon is true) -->
+              {if $course->show_ribbon}
+                <div class="ribbon">
+                  <span>OD {$course->start_date|date:'j.n.Y'}</span>
+                </div>
+              {/if}
+              
+              <!-- Card Image -->
+              <img 
+                src="{$course->image}" 
+                class="card-img-top" 
+                alt="{$course->name}" 
+                loading="lazy"
+              >
+              
+              <!-- Card Body -->
+              <div class="card-body">
+                <h5 class="card-title">{$course->name}</h5>
+                <p class="card-text">{$course->description}</p>
+                <a href="{link 'detail', courseId => $course->id}" class="btn btn-primary">
+                  Zjistit více
+                </a>
               </div>
-            {/if}
-            
-            <!-- Card Image -->
-            <img 
-              src="{$course->image}" 
-              class="card-img-top" 
-              alt="{$course->name}" 
-              loading="lazy"
-            >
-            
-            <!-- Card Body -->
-            <div class="card-body">
-              <h5 class="card-title">{$course->name}</h5>
-              <p class="card-text">{$course->description}</p>
-              <a href="{link 'detail', courseId => $course->id}" class="btn btn-primary">
-                Zjistit více
-              </a>
             </div>
           </div>
-        </div>
-      {/foreach}
+        {/foreach}
+      </div>
     </div>
-  </div>
-</section>
-
+  </section>
 
   <hr class="my-5" style="border-color: #ddd;">
 
