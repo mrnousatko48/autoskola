@@ -7,6 +7,7 @@ use Nette\Application\UI\Presenter;
 use Nette\Application\UI\Form;
 use App\Model\PageFacade;
 use App\Model\UserFacade;
+use App\Model\RegistrationFacade;
 
 /**
  * DashboardPresenter provides separate admin pages for editing each section.
@@ -16,17 +17,19 @@ final class DashboardPresenter extends Presenter
     /** @var PageFacade */
     private PageFacade $pageFacade;
     private UserFacade $userFacade;
+    private RegistrationFacade $registrationFacade;
 
     /**
      * Constructor.
      *
      * @param PageFacade $pageFacade Central facade for retrieving and updating page content.
      */
-    public function __construct(PageFacade $pageFacade, UserFacade $userFacade)
+    public function __construct(PageFacade $pageFacade, UserFacade $userFacade, RegistrationFacade $registrationFacade)
     {
         parent::__construct();
         $this->pageFacade = $pageFacade;
         $this->userFacade = $userFacade;
+        $this->registrationFacade = $registrationFacade;
     }
 
     protected function startup(): void
@@ -76,13 +79,13 @@ final class DashboardPresenter extends Presenter
         $this->template->setFile(__DIR__ . '/Templates/contact.latte');
     }
 
+    public function renderRegistrations(): void
+        {
+            $registrations = $this->registrationFacade->getRegistrations();
+            $this->template->registrations = $registrations;
+        }
 
-    /**
-     * Render the Advantages edit page.
-     *
-     * If an 'id' parameter is passed, load that advantage for editing;
-     * otherwise, load the list of advantages.
-     */
+
     public function renderAdvantages(): void
     {
         $id = $this->getParameter('id');
@@ -416,70 +419,74 @@ public function createComponentOfferForm(): Form
      * @return Form
      */
     public function createComponentCourseForm(): Form
-    {
-        $id = $this->getParameter('id');
-        if (!$id) {
-            $this->error('Course not found');
-        }
-        $course = $this->pageFacade->getCourseById((int)$id);
-        if (!$course) {
-            $this->error('Course not found');
-        }
-        
-        $fields = [
-            'name'        => ['type' => 'text',     'label' => 'Název Kurzu', 'required' => true],
-            'description' => ['type' => 'textArea', 'label' => 'Popis:',      'required' => true],
-            'price'       => ['type' => 'text',     'label' => 'Cena:',       'required' => true],
-            'location'    => ['type' => 'text',     'label' => 'Adresa:',     'required' => true],
-            'start_date'  => ['type' => 'text',     'label' => 'Začíná:',     'required' => true, 'htmlType' => 'date'],
-        ];
-        
-        $form = $this->createEditForm(
-            $course,
-            $fields,
-            function ($submittedId, $values) use ($course) {
-                /** @var \Nette\Http\FileUpload $image */
-                $image = $values['image'];
-                // If a valid new image was uploaded, use its path; otherwise keep the existing course image.
-                $values['image'] = \App\Utils\ImageUploader::uploadImage($image, 'uploads/courses', $course->image);
-                $courseId = (int)$values['id'];
-                $this->pageFacade->updateCourse($courseId, (array)$values);
-            },
-            'Course updated successfully.',
-            'Dashboard:courses'
-        );
-        
-        // Add hidden field for course ID
-        $form->addHidden('id')->setDefaultValue($course->id);
-        
-        // Preload date field in HTML date format
-        if ($course->start_date instanceof \DateTimeInterface) {
-            $form->getComponent('start_date')->setDefaultValue($course->start_date->format('Y-m-d'));
-        }
-        
-        // Remove any pre‑existing "image" field if it exists, and add a file upload control.
-        if ($form->getComponent('image', false)) {
-            $form->removeComponent($form['image']);
-        }
-        $form->addUpload('image', 'Obrázek:')
-             ->setHtmlAttribute('class', 'form-control');
-        
-        // Set the encoding type for file uploads.
-        $form->getElementPrototype()->enctype = 'multipart/form-data';
-        
-        // Remove the existing submit button (added via createEditForm)
-        if ($form->getComponent('save', false)) {
-            $form->removeComponent($form['save']);
-        }
-        // Add a new submit button positioned after the upload control.
-        $form->addSubmit('save', 'Uložit')
-             ->getControlPrototype()->addClass('btn btn-primary');
-        
-        // Ensure the course ID remains in the URL upon submission.
-        $form->setAction($this->link('Dashboard:courses', ['id' => $course->id]));
-        
-        return $form;
+{
+    $id = $this->getParameter('id');
+    if (!$id) {
+        $this->error('Course not found');
     }
+    $course = $this->pageFacade->getCourseById((int)$id);
+    if (!$course) {
+        $this->error('Course not found');
+    }
+    
+    $fields = [
+        'name'        => ['type' => 'text',     'label' => 'Název Kurzu', 'required' => true],
+        'description' => ['type' => 'textArea', 'label' => 'Popis:',      'required' => true],
+        'price'       => ['type' => 'text',     'label' => 'Cena:',       'required' => true],
+        'location'    => ['type' => 'text',     'label' => 'Adresa:',     'required' => true],
+        'start_date'  => ['type' => 'text',     'label' => 'Začíná:',     'required' => true, 'htmlType' => 'date'],
+    ];
+    
+    $form = $this->createEditForm(
+        $course,
+        $fields,
+        function ($submittedId, $values) use ($course) {
+            /** @var \Nette\Http\FileUpload $image */
+            $image = $values['image'];
+            $values['image'] = \App\Utils\ImageUploader::uploadImage($image, 'uploads/courses', $course->image);
+            $values['show_ribbon'] = $values['show_ribbon']; // Ensure the ribbon value is included
+            $courseId = (int)$values['id'];
+            $this->pageFacade->updateCourse($courseId, (array)$values);
+        },
+        'Course updated successfully.',
+        'Dashboard:courses'
+    );
+    
+    // Add hidden field for course ID
+    $form->addHidden('id')->setDefaultValue($course->id);
+    
+    // Preload date field in HTML date format
+    if ($course->start_date instanceof \DateTimeInterface) {
+        $form->getComponent('start_date')->setDefaultValue($course->start_date->format('Y-m-d'));
+    }
+    
+    // Remove any pre-existing "image" field if it exists, and add a file upload control
+    if ($form->getComponent('image', false)) {
+        $form->removeComponent($form['image']);
+    }
+    $form->addUpload('image', 'Obrázek:')
+         ->setHtmlAttribute('class', 'form-control');
+    
+    // Add the ribbon toggle checkbox
+    $form->addCheckbox('show_ribbon', 'Zobrazit ribbon')
+         ->setDefaultValue($course->show_ribbon ?? true); // Default to true if not set
+    
+    // Set the encoding type for file uploads
+    $form->getElementPrototype()->enctype = 'multipart/form-data';
+    
+    // Remove the existing submit button (added via createEditForm)
+    if ($form->getComponent('save', false)) {
+        $form->removeComponent($form['save']);
+    }
+    // Add a new submit button
+    $form->addSubmit('save', 'Uložit')
+         ->getControlPrototype()->addClass('btn btn-primary');
+    
+    // Ensure the course ID remains in the URL upon submission
+    $form->setAction($this->link('Dashboard:courses', ['id' => $course->id]));
+    
+    return $form;
+}
 
     
 

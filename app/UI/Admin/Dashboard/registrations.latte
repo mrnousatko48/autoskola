@@ -1,0 +1,31 @@
+{block content}
+<h1>Registrations</h1>
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Course ID</th>
+                <th>Registration Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {foreach $registrations as $registration}
+            <tr>
+                <td>{$registration->id}</td>
+                <td>{$registration->name}</td>
+                <td>{$registration->address}</td>
+                <td>{$registration->email}</td>
+                <td>{$registration->phone}</td>
+                <td>{$registration->course_id}</td>
+                <td>{$registration->created_at|date:'d.m.Y H:i'}</td>
+            </tr>
+            {/foreach}
+        </tbody>
+    </table>
+</div>
+{/block}

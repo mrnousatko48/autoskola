@@ -104,7 +104,7 @@
 
   <hr class="my-5" style="border-color: #ddd;">
 
- <!-- Kurzy Section -->
+<!-- Kurzy Section -->
 <section id="courses" class="courses py-5">
   <div class="container">
     <h2 class="text-center mb-5">Naše kurzy</h2>
@@ -113,10 +113,12 @@
         <div class="col-md-4 mb-4">
           <div class="card h-100 position-relative">
             
-            <!-- Ribbon -->
-            <div class="ribbon">
-              <span>OD {$course->start_date|date:'j.n.Y'}</span>
-            </div>
+            <!-- Ribbon (shown only if show_ribbon is true) -->
+            {if $course->show_ribbon}
+              <div class="ribbon">
+                <span>OD {$course->start_date|date:'j.n.Y'}</span>
+              </div>
+            {/if}
             
             <!-- Card Image -->
             <img 
@@ -130,9 +132,9 @@
             <div class="card-body">
               <h5 class="card-title">{$course->name}</h5>
               <p class="card-text">{$course->description}</p>
-                <a href="{link 'detail', courseId => $course->id}" class="btn btn-primary">
-                    Zjistit více
-                </a>
+              <a href="{link 'detail', courseId => $course->id}" class="btn btn-primary">
+                Zjistit více
+              </a>
             </div>
           </div>
         </div>
@@ -140,7 +142,6 @@
     </div>
   </div>
 </section>
-
 
 
   <hr class="my-5" style="border-color: #ddd;">
