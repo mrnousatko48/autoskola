@@ -1,12 +1,3 @@
--- Adminer 4.8.1 MySQL 9.1.0 dump
-
-SET NAMES utf8;
-SET time_zone = '+00:00';
-SET foreign_key_checks = 0;
-SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
-
-SET NAMES utf8mb4;
-
 CREATE DATABASE `autoskola` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `autoskola`;
 
@@ -21,7 +12,7 @@ CREATE TABLE `about_section` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `about_section` (`id`, `heading`, `image`, `alt_text`, `content`) VALUES
-(1,	'O nás',	'/images/about-us.jpg',	'Autoškola Prima',	'Autoškola Prima nabízí kvalitní výuku a přípravu na získání řidičského oprávnění pro různé skupiny. S působností v Teplicích a Bílině klademe důraz na individuální přístup, profesionalitu a flexibilitu, aby každý žák uspěl.');
+(1,	'O nás',	'/uploads/about/67cca7b20a3bd_Your-Vantage-1.webp',	'Autoškola Prima',	'Autoškola Prima nabízí kvalitní výuku a přípravu na získání řidičského oprávnění pro různé skupiny. S působností v Pardubicích. Klademe důraz na individuální přístup, profesionalitu a flexibilitu, aby každý žák uspěl. ');
 
 DROP TABLE IF EXISTS `advantages`;
 CREATE TABLE `advantages` (
@@ -66,12 +57,13 @@ CREATE TABLE `courses` (
   `price` decimal(10,2) DEFAULT NULL,
   `location` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci NOT NULL,
   `start_date` date NOT NULL DEFAULT '2025-01-01',
+  `show_ribbon` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_czech_ci;
 
-INSERT INTO `courses` (`id`, `name`, `description`, `image`, `price`, `location`, `start_date`) VALUES
-(1,	'Skupina B',	'Výuka pro osobní automobily',	'/uploads/ridicak.jpg',	18500.00,	'Shrekova Bažina 13',	'2025-11-16'),
-(2,	'Kondiční jízdy',	'Zdokonalení řidičských dovedností',	'/uploads/auto.jpg',	500.00,	'Shrekova Bažina 14',	'2025-03-23');
+INSERT INTO `courses` (`id`, `name`, `description`, `image`, `price`, `location`, `start_date`, `show_ribbon`) VALUES
+(1,	'Skupina B',	'Výuka pro osobní automobily',	'/uploads/courses/67cca782b04c2_Your-DB12-Coupe.webp',	18500.00,	'Shrekova Bažina 13',	'2025-12-31',	1),
+(2,	'Kondiční jízdy',	'Zdokonalení řidičských dovedností',	'/uploads/courses/67cca7a381a2f_Your-Vanquish.webp',	500.00,	'Shrekova Bažina 14',	'2025-03-23',	0);
 
 DROP TABLE IF EXISTS `hero_section`;
 CREATE TABLE `hero_section` (
@@ -84,7 +76,7 @@ CREATE TABLE `hero_section` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `hero_section` (`id`, `heading`, `subheading`, `button_text`, `button_link`) VALUES
-(1,	'Vítejte v Autoškole Prima',	'Kvalitní výuka od zkušených instruktorů v Pardubicích',	'Zjistit více o kurzech',	'/course-list');
+(1,	'Vítejte v Autoškole Prima',	'Kvalitní výuka od zkušených instruktorů v Pardubicích',	'Zjistit více o kurzech',	'#courses');
 
 DROP TABLE IF EXISTS `offerings`;
 CREATE TABLE `offerings` (
@@ -119,13 +111,32 @@ INSERT INTO `other_services` (`id`, `section`, `item`, `price`, `description`, `
 (4,	'installments',	'Záloha na začátku kurzu',	'8 500,- Kč',	'(Je možno domluvit i jinou variantu splátek.)',	1),
 (5,	'installments',	'2.–3. splátka (každá)',	'5 000,- Kč',	'',	2),
 (6,	'installments',	'Celkem',	'18 500,- Kč',	'',	3),
-(7,	'other',	'Kondiční–cvičná jízda (45 min.)',	'650,- Kč',	NULL,	1),
+(7,	'other',	'Kondiční–cvičná jízda (45 min.)',	'650kč',	'',	1),
 (8,	'other',	'Opravná zkouška (jízda)',	'500,- Kč',	NULL,	2),
 (9,	'other',	'Opravná zkouška (test)',	'500,- Kč',	NULL,	3),
 (10,	'other',	'Zapůjčení učebnice (vratná záloha)',	'250,- Kč',	NULL,	4),
 (11,	'other',	'Vrácení ŘO',	'4 000,- Kč',	NULL,	5),
 (12,	'other',	'Storno kurzu',	'1 000,- Kč',	NULL,	6),
 (13,	'other',	'Přestup z jiné autoškoly',	'1 000,- Kč',	NULL,	7);
+
+DROP TABLE IF EXISTS `registrations`;
+CREATE TABLE `registrations` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(20) NOT NULL,
+  `course_id` int NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  KEY `course_id` (`course_id`),
+  CONSTRAINT `registrations_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `registrations` (`id`, `name`, `address`, `email`, `phone`, `course_id`, `created_at`) VALUES
+(22,	'Martin Burda',	'shrekova bazina 13',	'xmanmartinburda@seznam.cz',	'666777888',	1,	'2025-03-09 09:53:59'),
+(24,	'Martin Burda',	'shrekova bazina 13',	'burdadko.cz@gmail.com',	'666777888',	1,	'2025-03-09 09:57:47');
 
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
@@ -137,6 +148,6 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `users` (`id`, `username`, `password`, `role`) VALUES
-(1,	'admin',	'$2y$10$N5dEPMZoCCuisRpdN5/iE.gD4MApYT2KEaoqVt7NiJs5j6DB/5twm',	'admin');
-
--- 2025-03-07 21:34:16
+(1,	'admin',	'$2y$10$N5dEPMZoCCuisRpdN5/iE.gD4MApYT2KEaoqVt7NiJs5j6DB/5twm',	'admin'),
+(2,	'uzivatel',	'$2y$10$xRu75sscW5QLPadIW0CT/.suvt2rULmPdptTai/273zer8GoYqHzi',	'admin'),
+(3,	'user_alice',	'$2y$10$jBXTtmnwDzMoXNM9CXPox.Puht1j7ahguu.ej/HJZ3fhej.h9T1ZG',	'admin');
