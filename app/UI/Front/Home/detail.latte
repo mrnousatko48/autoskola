@@ -3,35 +3,32 @@
 {/block}
 
 {block hero}
-  <!-- Hero section for detail page -->
   <div class="hero" style="background-image: url('{$course->image}')">
     <div class="overlay">
       <h1 class="text-center text-white">{$course->name}</h1>
+      <div class="text-center">
+      </div>
     </div>
   </div>
 {/block}
 
 {block content}
-  <!-- Detail page content -->
   <div class="container">
       <h1>{$course->name}</h1>
       <p><strong>Místo konání:</strong> {$course->location}</p>
       <p>
-        <strong>Aktuální termín začátku:</strong>
-        {$course->start_date|date:'j. n. Y H:i'}
+          <strong>Aktuální termín začátku:</strong>
+          {$course->start_date|date:'d.m.Y'} od {$course->start_date|date:'H:i'}h
       </p>
       <p><strong>Cena kurzu:</strong> {$course->price} Kč</p>
 
-      <!-- Popis kurzu -->
       <p>
         Tento kurz nabízí komplexní výuku zaměřenou na bezpečnost a praktické dovednosti.
         Dozvíte se všechny potřebné informace a techniky pro úspěšné absolvování, přičemž
         klademe důraz na individuální přístup a moderní metody výuky.
       </p>
 
-      <!-- Dva sloupce: formulář a kontaktní informace -->
       <div class="row modern-columns">
-          <!-- Sloupec s formulářem -->
           <div class="col-md-8">
               <div class="modern-container">
                   <h3>Přihláška na kurz</h3>
@@ -59,7 +56,6 @@
                   </p>
               </div>
           </div>
-          <!-- Sloupec s kontaktními informacemi -->
           <div class="col-md-4">
               <div class="modern-container contact-container">
                   <h3>Nebo nás kontaktujte</h3>

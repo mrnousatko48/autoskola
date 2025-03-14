@@ -7,7 +7,7 @@ use Nette\Application\UI\Presenter;
 use Nette\Application\UI\Form;
 use App\Model\PageFacade;
 use App\Model\UserFacade;
-use App\Model\RegistrationFacade;
+use App\Model\EmailFacade;
 
 /**
  * DashboardPresenter provides separate admin pages for editing each section.
@@ -17,19 +17,19 @@ final class DashboardPresenter extends Presenter
     /** @var PageFacade */
     private PageFacade $pageFacade;
     private UserFacade $userFacade;
-    private RegistrationFacade $registrationFacade;
+    private EmailFacade $EmailFacade;
 
     /**
      * Constructor.
      *
      * @param PageFacade $pageFacade Central facade for retrieving and updating page content.
      */
-    public function __construct(PageFacade $pageFacade, UserFacade $userFacade, RegistrationFacade $registrationFacade)
+    public function __construct(PageFacade $pageFacade, UserFacade $userFacade, EmailFacade $EmailFacade)
     {
         parent::__construct();
         $this->pageFacade = $pageFacade;
         $this->userFacade = $userFacade;
-        $this->registrationFacade = $registrationFacade;
+        $this->EmailFacade = $EmailFacade;
     }
 
     protected function startup(): void
@@ -81,7 +81,7 @@ final class DashboardPresenter extends Presenter
 
     public function renderRegistrations(): void
     {
-        $registrations = $this->registrationFacade->getRegistrations();
+        $registrations = $this->EmailFacade->getRegistrations();
         $this->template->registrations = $registrations;
     }
 

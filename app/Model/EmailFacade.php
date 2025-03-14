@@ -4,7 +4,7 @@ namespace App\Model;
 
 use Nette\Database\Context;
 
-class RegistrationFacade
+class EmailFacade
 {
     private $database;
 
@@ -26,5 +26,11 @@ class RegistrationFacade
     public function getRegistrations()
     {
         return $this->database->table('registrations')->fetchAll();
+    }
+
+    public function getTemplateByName(string $name): ?array
+    {
+        $row = $this->database->table('email_templates')->where('name', $name)->fetch();
+        return $row ? $row->toArray() : null;
     }
 }
