@@ -144,10 +144,11 @@ final class DashboardPresenter extends Presenter
     /**
      * Render the Add Course page.
      */
-    public function renderAddCourse(): void
-    {
-        $this->template->setFile(__DIR__ . '/Templates/addCourse.latte');
-    }
+public function renderAddCourse(): void
+{
+    $this->template->courses = $this->pageFacade->getAllCourses(); // For consistency with courses.latte
+    $this->template->setFile(__DIR__ . '/Templates/courses.latte');
+}
 
     /* ------------------- Form Components ------------------- */
 
@@ -218,7 +219,7 @@ final class DashboardPresenter extends Presenter
      *
      * @return Form
      */
-    public function createComponentAddCourseForm(): Form
+public function createComponentAddCourseForm(): Form
 {
     $form = new Form;
     $fields = [
@@ -263,7 +264,7 @@ final class DashboardPresenter extends Presenter
         $image = $data['image'];
         $imagePath = \App\Utils\ImageUploader::uploadImage($image, 'uploads/courses', null);
         if (!$imagePath && $image->isOk()) {
-            throw new \Exception('Failed to upload image.');
+            throw new \Exception('Nepodařilo se nahrát obrázek.');
         }
 
         $this->pageFacade->addCourse(
@@ -575,6 +576,13 @@ final class DashboardPresenter extends Presenter
         $this->flashMessage('Uživatel byl úspěšně odstraněn.', 'success');
         $this->redirect('user');
     } 
+
+    public function actionDeleteCourse(int $id): void
+    {
+        $this->pageFacade->deleteCourse($id);
+        $this->flashMessage('Kurz byl úspěšně odstraněn.', 'success');
+        $this->redirect('courses');
+    }
 
     protected function createComponentUserEmailForm(): Form
     {
