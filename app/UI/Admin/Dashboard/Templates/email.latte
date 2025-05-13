@@ -1,9 +1,65 @@
 {block content}
 {block css}
 <link rel="stylesheet" href="/css/emailUpdate.css">
+<style>
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  .modal-content h3 {
+    margin-bottom: 15px;
+    color: #333;
+  }
+  .modal-content p {
+    margin-bottom: 20px;
+    color: #666;
+  }
+  .modal-buttons {
+    display: flex;
+    justify-content: space-around;
+  }
+  .modal-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .btn-confirm {
+    background-color: #3498db;
+    color: #fff;
+  }
+  .btn-confirm:hover {
+    background-color: #2980b9;
+  }
+  .btn-cancel {
+    background-color: #e74c3c;
+    color: #fff;
+  }
+  .btn-cancel:hover {
+    background-color: #c0392b;
+  }
+</style>
 {/block}
-<div class="dashboard-container">
 
+<div class="dashboard-container">
   <div class="card-footer text-center">
     <a href="{link Dashboard:default}" class="btn btn-secondary">← Zpět na nástěnku</a>
   </div>
@@ -11,7 +67,7 @@
   <!-- Šablona pro uživatele -->
   <h2>Notifikace pro uživatele</h2>
   <div class="modern-container">
-    <form n:name="userEmailForm" enctype="multipart/form-data">
+    <form n:name="userEmailForm" id="userEmailForm" enctype="multipart/form-data">
       <div class="form-group">
         <label n:name="subject">Předmět:</label>
         <input n:name="subject" class="form-control">
@@ -31,14 +87,26 @@
           <p>Aktuální přílohy: {implode(', ', $defaults['pdf_paths'])}</p>
         {/if}
       </div>
-      <button n:name="submit" class="btn btn-primary">Uložit změny</button>
+      <button type="button" class="btn btn-primary" onclick="showModal('userConfirmModal')">Uložit změny</button>
     </form>
+
+    <!-- Modal pro uživatele -->
+    <div id="userConfirmModal" class="modal">
+      <div class="modal-content">
+        <h3>Jste si jisti?</h3>
+        <p>Opravdu chcete uložit změny? Úprava je nevratná.</p>
+        <div class="modal-buttons">
+          <button class="btn-confirm" onclick="submitForm('userEmailForm')">Ano, uložit</button>
+          <button class="btn-cancel" onclick="hideModal('userConfirmModal')">Zrušit</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Šablona pro admina -->
   <h2>Notifikace pro administrátora</h2>
   <div class="modern-container">
-    <form n:name="adminEmailForm" enctype="multipart/form-data">
+    <form n:name="adminEmailForm" id="adminEmailForm" enctype="multipart/form-data">
       <div class="form-group">
         <label n:name="subject">Předmět:</label>
         <input n:name="subject" class="form-control">
@@ -51,8 +119,34 @@
         <label n:name="recipient_email">Email administrátora:</label>
         <input n:name="recipient_email" class="form-control">
       </div>
-      <button n:name="submit" class="btn btn-primary">Uložit změny</button>
+      <button type="button" class="btn btn-primary" onclick="showModal('adminConfirmModal')">Uložit změny</button>
     </form>
+
+    <!-- Modal pro admina -->
+    <div id="adminConfirmModal" class="modal">
+      <div class="modal-content">
+        <h3>Jste si jisti?</h3>
+        <p>Opravdu chcete uložit změny? Úprava je nevratná.</p>
+        <div class="modal-buttons">
+          <button class="btn-confirm" onclick="submitForm('adminEmailForm')">Ano, uložit</button>
+          <button class="btn-cancel" onclick="hideModal('adminConfirmModal')">Zrušit</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
+
+<script>
+  function showModal(modalId) {
+    document.getElementById(modalId).style.display = 'flex';
+  }
+
+  function hideModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+  }
+
+  function submitForm(formId) {
+    document.getElementById(formId).submit();
+  }
+</script>
 {/block}

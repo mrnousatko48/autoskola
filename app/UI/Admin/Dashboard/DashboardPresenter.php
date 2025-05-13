@@ -141,6 +141,14 @@ final class DashboardPresenter extends Presenter
         $this->template->setFile(__DIR__ . '/Templates/courses.latte');
     }
 
+    /**
+     * Render the Add Course page.
+     */
+    public function renderAddCourse(): void
+    {
+        $this->template->setFile(__DIR__ . '/Templates/addCourse.latte');
+    }
+
     /* ------------------- Form Components ------------------- */
 
     /**
@@ -204,6 +212,87 @@ final class DashboardPresenter extends Presenter
     
         return $form;
     }
+
+    /**
+     * Create a form to add a new Course.
+     *
+     * @return Form
+     */
+    public function createComponentAddCourseForm(): Form
+{
+    $form = new Form;
+    $fields = [
+        'name' => ['type' => 'text', 'label' => 'Název kurzu:', 'required' => true],
+        'description' => ['type' => 'textArea', 'label' => 'Popis:', 'required' => true],
+        'content' => ['type' => 'textArea', 'label' => 'Podrobný obsah:', 'required' => false], // New field
+        'price' => ['type' => 'text', 'label' => 'Cena:', 'required' => true],
+        'location' => ['type' => 'text', 'label' => 'Adresa:', 'required' => true],
+        'start_date' => ['type' => 'text', 'label' => 'Začíná:', 'required' => true, 'htmlType' => 'date'],
+        'start_time' => ['type' => 'text', 'label' => 'Začátek času:', 'required' => true, 'htmlType' => 'time'],
+    ];
+
+    $form->addUpload('image', 'Obrázek:')
+         ->setHtmlAttribute('class', 'form-control');
+
+    foreach ($fields as $name => $config) {
+        $method = 'add' . ucfirst($config['type']);
+        $field = $form->$method($name, $config['label'] ?? '');
+        if (isset($config['htmlType'])) {
+            $field->setHtmlType($config['htmlType']);
+        }
+        if (!empty($config['required'])) {
+            $field->setRequired();
+        }
+        if ($config['type'] !== 'hidden') {
+            $field->getControlPrototype()->addClass('form-control');
+        }
+    }
+
+    $form->addCheckbox('show_ribbon', 'Zobrazit ribbon')
+         ->setDefaultValue(true);
+
+    $form->addSubmit('save', 'Přidat kurz')
+        ->getControlPrototype()->addClass('btn btn-primary')
+        ->setAttribute('type', 'submit');
+
+
+    $form->onSuccess[] = function (Form $form, $values) {
+    $data = (array)$values;
+
+    try {
+        $image = $data['image'];
+        $imagePath = \App\Utils\ImageUploader::uploadImage($image, 'uploads/courses', null);
+        if (!$imagePath && $image->isOk()) {
+            throw new \Exception('Failed to upload image.');
+        }
+
+        $this->pageFacade->addCourse(
+            $data['name'],
+            $data['description'],
+            $data['content'],
+            $imagePath,
+            floatval(str_replace(',', '.', $data['price'])),
+            $data['location'],
+            $data['start_date'],
+            $data['start_time'],
+            (bool)$data['show_ribbon']
+        );
+
+        $this->flashMessage('Kurz byl úspěšně přidán.', 'success');
+
+    } catch (\Exception $e) {
+        $this->flashMessage('Nastala chyba při přidávání kurzu: ' . $e->getMessage(), 'danger');
+        $this->redirect('this');
+    }
+
+    $this->redirect('Dashboard:courses');
+};
+
+
+    $form->getElementPrototype()->enctype = 'multipart/form-data';
+
+    return $form;
+}
 
     /**
      * Create a form to edit an Offering.
@@ -352,7 +441,6 @@ final class DashboardPresenter extends Presenter
             $this->error('Výhoda nenalezena');
         }
         $fields = [
-            'icon'        => ['type' => 'text',     'label' => 'Ikona:',       'required' => true],
             'title'       => ['type' => 'text',     'label' => 'Název:',      'required' => true],
             'description' => ['type' => 'textArea', 'label' => 'Popis:',       'required' => true],
         ];
@@ -427,6 +515,7 @@ final class DashboardPresenter extends Presenter
         $fields = [
             'name'        => ['type' => 'text',     'label' => 'Název kurzu:', 'required' => true],
             'description' => ['type' => 'textArea', 'label' => 'Popis:',        'required' => true],
+            'content'     => ['type' => 'textArea', 'label' => 'Podrobný obsah:', 'required' => false],
             'price'       => ['type' => 'text',     'label' => 'Cena:',         'required' => true],
             'location'    => ['type' => 'text',     'label' => 'Adresa:',       'required' => true],
             'start_date'  => ['type' => 'text',     'label' => 'Začíná:',       'required' => true, 'htmlType' => 'date'],
@@ -468,7 +557,8 @@ final class DashboardPresenter extends Presenter
             $form->removeComponent($form['save']);
         }
         $form->addSubmit('save', 'Uložit')
-             ->getControlPrototype()->addClass('btn btn-primary');
+            ->getControlPrototype()->addClass('btn btn-primary')
+            ->setAttribute('type', 'submit');
     
         $form->setAction($this->link('Dashboard:courses', ['id' => $course->id]));
     
@@ -543,48 +633,48 @@ final class DashboardPresenter extends Presenter
         return $form;
     }
 
-public function userEmailFormSucceeded(Form $form, $values): void
-{
-    $this->emailFacade->updateTemplate('usr_confirmation', [
-        'subject' => $values->subject,
-        'body' => $values->body,
-        'admin_phone' => $values->admin_phone,
-    ]);
-    $this->flashMessage('Šablona pro uživatele byla aktualizována.', 'success');
-    $this->redirect('this');
-}
+    public function userEmailFormSucceeded(Form $form, $values): void
+    {
+        $this->emailFacade->updateTemplate('usr_confirmation', [
+            'subject' => $values->subject,
+            'body' => $values->body,
+            'admin_phone' => $values->admin_phone,
+        ]);
+        $this->flashMessage('Šablona pro uživatele byla aktualizována.', 'success');
+        $this->redirect('this');
+    }
 
-public function createComponentAdminEmailForm(): Form
-{
-    $form = new Form;
-    $defaults = $this->emailFacade->getTemplateByName('admin_notification');
+    public function createComponentAdminEmailForm(): Form
+    {
+        $form = new Form;
+        $defaults = $this->emailFacade->getTemplateByName('admin_notification');
 
-    $form->addText('subject', 'Předmět:')
-        ->setDefaultValue($defaults['subject'] ?? '')
-        ->setRequired('Předmět je povinný.');
-    $form->addTextArea('body', 'Tělo emailu (HTML):')
-        ->setDefaultValue($defaults['body'] ?? '')
-        ->setRequired('Tělo emailu je povinné.');
-    $form->addEmail('recipient_email', 'Email administrátora:')
-        ->setDefaultValue($defaults['recipient_email'] ?? '')
-        ->setRequired('Email administrátora je povinný.');
-    $form->addText('admin_phone', 'Kontaktní telefon:')
-        ->setDefaultValue($defaults['admin_phone'] ?? '');
-    $form->addSubmit('submit', 'Uložit změny');
+        $form->addText('subject', 'Předmět:')
+            ->setDefaultValue($defaults['subject'] ?? '')
+            ->setRequired('Předmět je povinný.');
+        $form->addTextArea('body', 'Tělo emailu (HTML):')
+            ->setDefaultValue($defaults['body'] ?? '')
+            ->setRequired('Tělo emailu je povinné.');
+        $form->addEmail('recipient_email', 'Email administrátora:')
+            ->setDefaultValue($defaults['recipient_email'] ?? '')
+            ->setRequired('Email administrátora je povinný.');
+        $form->addText('admin_phone', 'Kontaktní telefon:')
+            ->setDefaultValue($defaults['admin_phone'] ?? '');
+        $form->addSubmit('submit', 'Uložit změny');
 
-    $form->onSuccess[] = [$this, 'adminEmailFormSucceeded'];
-    return $form;
-}
+        $form->onSuccess[] = [$this, 'adminEmailFormSucceeded'];
+        return $form;
+    }
 
-public function adminEmailFormSucceeded(Form $form, $values): void
-{
-    $this->emailFacade->updateTemplate('admin_notification', [
-        'subject' => $values->subject,
-        'body' => $values->body,
-        'recipient_email' => $values->recipient_email,
-        'admin_phone' => $values->admin_phone,
-    ]);
-    $this->flashMessage('Šablona pro administrátora byla aktualizována.', 'success');
-    $this->redirect('this');
-}
+    public function adminEmailFormSucceeded(Form $form, $values): void
+    {
+        $this->emailFacade->updateTemplate('admin_notification', [
+            'subject' => $values->subject,
+            'body' => $values->body,
+            'recipient_email' => $values->recipient_email,
+            'admin_phone' => $values->admin_phone,
+        ]);
+        $this->flashMessage('Šablona pro administrátora byla aktualizována.', 'success');
+        $this->redirect('this');
+    }
 }

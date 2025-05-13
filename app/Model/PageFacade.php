@@ -63,14 +63,30 @@ class PageFacade {
         return $this->database->table('courses')->get($id);
     }
 
-    public function addCourse(string $name, ?string $description, ?string $image, float $price): void {
-        $this->database->table('courses')->insert([
-            'name' => $name,
-            'description' => $description,
-            'image' => $image,
-            'price' => $price,
-        ]);
-    }
+public function addCourse(string $name, ?string $description, ?string $content,  ?string $image, float $price, string $location, string $start_date, string $start_time, bool $show_ribbon = true): void {
+    error_log('Inserting course with data: ' . print_r([
+        'name' => $name,
+        'description' => $description,
+        'content' => $content,
+        'image' => $image,
+        'price' => $price,
+        'location' => $location,
+        'start_date' => $start_date,
+        'start_time' => $start_time,
+        'show_ribbon' => $show_ribbon,
+    ], true));
+    $this->database->table('courses')->insert([
+        'name' => $name,
+        'description' => $description,
+        'content' => $content,
+        'image' => $image,
+        'price' => $price,
+        'location' => $location,
+        'start_date' => $start_date,
+        'start_time' => $start_time,
+        'show_ribbon' => $show_ribbon,
+    ]);
+}
 
     public function getGroupedCoursePrices(): array {
         $rows = $this->database->table('other_services')->order('section ASC, ordering ASC');
@@ -121,5 +137,9 @@ public  function getOfferById(int $id) {
 
 public function updateOffer(int $id, array $values): void {
     $this->updateRecord('offerings', $id, $values);
+}
+public function deleteCourse(int $id): void
+{
+    $this->database->table('courses')->get($id)->delete();
 }
 }

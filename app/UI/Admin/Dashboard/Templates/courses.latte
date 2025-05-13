@@ -12,11 +12,23 @@
         <a href="{link Dashboard:courses}" class="btn btn-secondary">← Zpět na seznam kurzů</a>
       </div>
     </div>
+{elseif $presenter->getParameter('action') === 'addCourse'}
+    <div class="card">
+      <div class="card-header bg-success text-white">
+        <h3 class="mb-0">Přidat nový kurz</h3>
+      </div>
+      <div class="card-body">
+        {control addCourseForm}
+      </div>
+      <div class="card-footer text-end">
+        <a href="{link Dashboard:courses}" class="btn btn-secondary">← Zpět na seznam kurzů</a>
+      </div>
+    </div>
   {else}
     <h1>Kurzy</h1>
     <p>
       <a href="{link Dashboard:default}" class="btn btn-secondary">← Zpět na Nástěnku</a>
-      <!-- Volitelně zde můžete přidat tlačítko "Nový kurz" -->
+      <a href="{link Dashboard:addCourse}" class="btn btn-success ms-2">Nový kurz</a>
     </p>
     <table class="table table-bordered">
       <thead>
@@ -24,7 +36,7 @@
           <th>Obrázek</th>
           <th>Název</th>
           <th>Popis</th>
-          <th>Upravit</th>
+          <th>Akce</th>
         </tr>
       </thead>
       <tbody>
@@ -35,6 +47,8 @@
             <td>{$c->description|truncate:80}</td>
             <td>
               <a href="{link Dashboard:courses, id => $c->id}" class="btn btn-sm btn-primary">Upravit</a>
+              <a href="{link Dashboard:deleteCourse, id => $c->id}" class="btn btn-sm btn-danger" 
+                 onclick="return confirm('Opravdu chcete smazat kurz {$c->name}?')">Smazat</a>
             </td>
           </tr>
         {/foreach}
