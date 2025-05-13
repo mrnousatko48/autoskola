@@ -64,7 +64,7 @@ class MailSender
         string $userEmail,
         string $name,
         string $courseName,
-        string $courseLocation, // Místo konání kurzu
+        string $courseLocation,
         string $courseStartDate
     ): Message {
         $latte = new Engine();
@@ -72,35 +72,36 @@ class MailSender
         if (!$template) {
             throw new \Exception('Šablona usr_confirmation nebyla nalezena v databázi.');
         }
-    
+        
         $params = [
             'name' => $name,
             'courseName' => $courseName,
-            'courseLocation' => $courseLocation, // Místo konání kurzu pro uživatele
+            'courseLocation' => $courseLocation,
             'adminPhone' => $template['admin_phone'] ?? 'Není zadán telefon',
             'courseStartDate' => $courseStartDate,
         ];
-    
+        
         $latte->setLoader(new \Latte\Loaders\StringLoader());
         $subject = $latte->renderToString($template['subject'], $params);
         $html = $latte->renderToString($template['body'], $params);
-    
+        
         $mail = new Message;
         $mail->setFrom('burdadko.cczz@seznam.cz')
              ->addTo($userEmail)
              ->setSubject($subject)
              ->setHtmlBody($html);
-    
-        $pdfPath = __DIR__ . '/../../www/uploads/pdf/podminky.pdf';
-        if (file_exists($pdfPath)) {
-            $mail->addAttachment('podminky.pdf', file_get_contents($pdfPath), mime_content_type($pdfPath));
+        
+        // Přidání PDF příloh z databáze
+        $baseDir = realpath(__DIR__ . '/../../www'); // Od MailSender do www
+        foreach ($template['pdf_paths'] as $pdfPath) {
+            $fullPath = $baseDir . $pdfPath;
+            if (file_exists($fullPath)) {
+                $mail->addAttachment(basename($pdfPath), file_get_contents($fullPath), mime_content_type($fullPath));
+            } else {
+                \Tracy\Debugger::log("PDF soubor nenalezen: $fullPath");
+            }
         }
-    
-        $pdfPath = __DIR__ . '/../../www/uploads/pdf/doktor.pdf';
-        if (file_exists($pdfPath)) {
-            $mail->addAttachment('doktor.pdf', file_get_contents($pdfPath), mime_content_type($pdfPath));
-        }
-    
+        
         return $mail;
     }
 

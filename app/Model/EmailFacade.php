@@ -28,9 +28,19 @@ class EmailFacade
         return $this->database->table('registrations')->fetchAll();
     }
 
-    public function getTemplateByName(string $name): ?array
+    public function getTemplateByName(string $name): array
     {
-        $row = $this->database->table('email_templates')->where('name', $name)->fetch();
-        return $row ? $row->toArray() : null;
+        $template = $this->database->table('email_templates')->where('name', $name)->fetch();
+        if (!$template) {
+            throw new \Exception("Šablona $name nebyla nalezena.");
+        }
+        $data = $template->toArray();
+        $data['pdf_paths'] = json_decode($data['pdf_paths'] ?? '[]', true); // pole cest k PDF
+        return $data;
+    }
+
+    public function updateTemplate(string $name, array $data): void
+    {
+        $this->database->table('email_templates')->where('name', $name)->update($data);
     }
 }

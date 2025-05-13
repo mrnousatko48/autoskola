@@ -3,14 +3,38 @@
 <div class="dashboard-container">
   <h1>Administrátorská nástěnka</h1>
   <p>Vyberte sekci k úpravě:</p>
+
   <div class="dashboard-menu">
-    <a href="{link Dashboard:hero}" class="btn btn-primary">Upravit hlavní sekci</a>
-    <a href="{link Dashboard:about}" class="btn btn-primary">Upravit sekci O nás</a>
-    <a href="{link Dashboard:contact}" class="btn btn-primary">Upravit kontaktní informace</a>
-    <a href="{link Dashboard:advantages}" class="btn btn-primary">Upravit výhody</a>
-    <a href="{link Dashboard:offerings}" class="btn btn-primary">Upravit nabídky</a>
-    <a href="{link Dashboard:prices}" class="btn btn-primary">Upravit ceník</a>
-    <a href="{link Dashboard:courses}" class="btn btn-primary">Upravit kurzy</a>
+    <!-- Sekce: Obsah webu -->
+    <div class="section-card">
+      <h3>Obsah webu</h3>
+      <div class="button-group">
+        <a href="{link Dashboard:hero}" class="btn btn-primary">Upravit hlavní sekci</a>
+        <a href="{link Dashboard:about}" class="btn btn-primary">Upravit sekci O nás</a>
+        <a href="{link Dashboard:contact}" class="btn btn-primary">Upravit kontaktní informace</a>
+      </div>
+      <div class="button-group">
+        <a href="{link Dashboard:advantages}" class="btn btn-primary">Upravit výhody</a>
+        <a href="{link Dashboard:offerings}" class="btn btn-primary">Upravit nabídky</a>
+      </div>
+    </div>
+
+    <!-- Sekce: Ceny a kurzy -->
+    <div class="section-card">
+      <h3>Ceny a kurzy</h3>
+      <div class="button-group">
+        <a href="{link Dashboard:prices}" class="btn btn-primary">Upravit ceník</a>
+        <a href="{link Dashboard:courses}" class="btn btn-primary">Upravit kurzy</a>
+      </div>
+    </div>
+
+    <!-- Sekce: Notifikace -->
+    <div class="section-card">
+      <h3>Notifikace</h3>
+      <div class="button-group">
+        <a href="{link Dashboard:email}" class="btn btn-primary">Upravit emailové šablony</a>
+      </div>
+    </div>
   </div>
 </div>
 {/block}

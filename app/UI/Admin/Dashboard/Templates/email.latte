@@ -1,0 +1,58 @@
+{block content}
+{block css}
+<link rel="stylesheet" href="/css/emailUpdate.css">
+{/block}
+<div class="dashboard-container">
+
+  <div class="card-footer text-center">
+    <a href="{link Dashboard:default}" class="btn btn-secondary">← Zpět na nástěnku</a>
+  </div>
+
+  <!-- Šablona pro uživatele -->
+  <h2>Notifikace pro uživatele</h2>
+  <div class="modern-container">
+    <form n:name="userEmailForm" enctype="multipart/form-data">
+      <div class="form-group">
+        <label n:name="subject">Předmět:</label>
+        <input n:name="subject" class="form-control">
+      </div>
+      <div class="form-group">
+        <label n:name="body">Tělo emailu (HTML):</label>
+        <textarea n:name="body" class="form-control" rows="10"></textarea>
+      </div>
+      <div class="form-group">
+        <label n:name="admin_phone">Kontaktní telefon:</label>
+        <input n:name="admin_phone" class="form-control">
+      </div>
+      <div class="form-group">
+        <label n:name="pdf_files">PDF přílohy:</label>
+        <input n:name="pdf_files" class="form-control">
+        {if !empty($defaults['pdf_paths'])}
+          <p>Aktuální přílohy: {implode(', ', $defaults['pdf_paths'])}</p>
+        {/if}
+      </div>
+      <button n:name="submit" class="btn btn-primary">Uložit změny</button>
+    </form>
+  </div>
+
+  <!-- Šablona pro admina -->
+  <h2>Notifikace pro administrátora</h2>
+  <div class="modern-container">
+    <form n:name="adminEmailForm" enctype="multipart/form-data">
+      <div class="form-group">
+        <label n:name="subject">Předmět:</label>
+        <input n:name="subject" class="form-control">
+      </div>
+      <div class="form-group">
+        <label n:name="body">Tělo emailu (HTML):</label>
+        <textarea n:name="body" class="form-control" rows="10"></textarea>
+      </div>
+      <div class="form-group">
+        <label n:name="recipient_email">Email administrátora:</label>
+        <input n:name="recipient_email" class="form-control">
+      </div>
+      <button n:name="submit" class="btn btn-primary">Uložit změny</button>
+    </form>
+  </div>
+</div>
+{/block}

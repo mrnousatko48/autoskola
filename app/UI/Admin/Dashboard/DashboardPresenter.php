@@ -7,7 +7,8 @@ use Nette\Application\UI\Presenter;
 use Nette\Application\UI\Form;
 use App\Model\PageFacade;
 use App\Model\UserFacade;
-use App\Model\EmailFacade;
+use App\Model\emailFacade;
+use App\Utils\PdfUploader;
 
 /**
  * DashboardPresenter provides separate admin pages for editing each section.
@@ -17,19 +18,19 @@ final class DashboardPresenter extends Presenter
     /** @var PageFacade */
     private PageFacade $pageFacade;
     private UserFacade $userFacade;
-    private EmailFacade $EmailFacade;
+    private emailFacade $emailFacade;
 
     /**
      * Constructor.
      *
      * @param PageFacade $pageFacade Central facade for retrieving and updating page content.
      */
-    public function __construct(PageFacade $pageFacade, UserFacade $userFacade, EmailFacade $EmailFacade)
+    public function __construct(PageFacade $pageFacade, UserFacade $userFacade, emailFacade $emailFacade)
     {
         parent::__construct();
         $this->pageFacade = $pageFacade;
         $this->userFacade = $userFacade;
-        $this->EmailFacade = $EmailFacade;
+        $this->emailFacade = $emailFacade;
     }
 
     protected function startup(): void
@@ -61,6 +62,13 @@ final class DashboardPresenter extends Presenter
         $this->template->setFile(__DIR__ . '/Templates/hero.latte');
     }
 
+    public function renderEmail(): void
+    {
+        $this->template->userTemplate = $this->emailFacade->getTemplateByName('usr_confirmation');
+        $this->template->adminTemplate = $this->emailFacade->getTemplateByName('admin_notification');
+        $this->template->setFile(__DIR__ . '/Templates/email.latte');
+    }
+
     /**
      * Render the About Section edit page.
      */
@@ -81,7 +89,7 @@ final class DashboardPresenter extends Presenter
 
     public function renderRegistrations(): void
     {
-        $registrations = $this->EmailFacade->getRegistrations();
+        $registrations = $this->emailFacade->getRegistrations();
         $this->template->registrations = $registrations;
     }
 
@@ -477,4 +485,106 @@ final class DashboardPresenter extends Presenter
         $this->flashMessage('Uživatel byl úspěšně odstraněn.', 'success');
         $this->redirect('user');
     } 
+
+    protected function createComponentUserEmailForm(): Form
+    {
+        $form = new Form;
+        $defaults = $this->emailFacade->getTemplateByName('usr_confirmation');
+    
+        $form->addText('subject', 'Předmět:')
+            ->setDefaultValue($defaults['subject'] ?? '')
+            ->setRequired('Předmět je povinný.');
+        $form->addTextArea('body', 'Tělo emailu (HTML):')
+            ->setDefaultValue($defaults['body'] ?? '')
+            ->setRequired('Tělo emailu je povinné.');
+        $form->addText('admin_phone', 'Kontaktní telefon:')
+            ->setDefaultValue($defaults['admin_phone'] ?? '');
+        $form->addUpload('pdf_files', 'PDF přílohy:')
+            ->setHtmlAttribute('multiple', 'multiple')
+            ->addCondition(Form::FILLED)
+                ->addRule(Form::MIME_TYPE, 'Nahraný soubor musí být PDF.', 'application/pdf');
+    
+        $form->addSubmit('submit', 'Uložit změny');
+    
+        $form->onSuccess[] = function (Form $form, \stdClass $values) {
+            $pdfPaths = [];
+            if (!empty($values->pdf_files)) {
+                $files = is_array($values->pdf_files) ? $values->pdf_files : [$values->pdf_files];
+                $uploadDir = realpath(__DIR__ . '/../../../www/uploads/pdf');
+                
+                // Kontrola, zda adresář existuje, pokud ne, vytvořit ho
+                if ($uploadDir === false) {
+                    $uploadDir = __DIR__ . '/../../../www/uploads/pdf';
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0777, true); // Vytvoří adresář rekurzivně
+                    }
+                    $uploadDir = realpath($uploadDir);
+                    if ($uploadDir === false) {
+                        throw new \Exception('Nepodařilo se vytvořit nebo najít adresář pro upload: ' . $uploadDir);
+                    }
+                }
+    
+                $pdfPaths = PdfUploader::uploadMultiplePdfs($files, $uploadDir);
+            } else {
+                $current = $this->emailFacade->getTemplateByName('usr_confirmation');
+                $pdfPaths = $current['pdf_paths'];
+            }
+    
+            $this->emailFacade->updateTemplate('usr_confirmation', [
+                'subject' => $values->subject,
+                'body' => $values->body,
+                'admin_phone' => $values->admin_phone,
+                'pdf_paths' => json_encode($pdfPaths),
+            ]);
+            $this->flashMessage('Šablona byla uložena.', 'success');
+            $this->redirect('this');
+        };
+    
+        return $form;
+    }
+
+public function userEmailFormSucceeded(Form $form, $values): void
+{
+    $this->emailFacade->updateTemplate('usr_confirmation', [
+        'subject' => $values->subject,
+        'body' => $values->body,
+        'admin_phone' => $values->admin_phone,
+    ]);
+    $this->flashMessage('Šablona pro uživatele byla aktualizována.', 'success');
+    $this->redirect('this');
+}
+
+public function createComponentAdminEmailForm(): Form
+{
+    $form = new Form;
+    $defaults = $this->emailFacade->getTemplateByName('admin_notification');
+
+    $form->addText('subject', 'Předmět:')
+        ->setDefaultValue($defaults['subject'] ?? '')
+        ->setRequired('Předmět je povinný.');
+    $form->addTextArea('body', 'Tělo emailu (HTML):')
+        ->setDefaultValue($defaults['body'] ?? '')
+        ->setRequired('Tělo emailu je povinné.');
+    $form->addEmail('recipient_email', 'Email administrátora:')
+        ->setDefaultValue($defaults['recipient_email'] ?? '')
+        ->setRequired('Email administrátora je povinný.');
+    $form->addText('admin_phone', 'Kontaktní telefon:')
+        ->setDefaultValue($defaults['admin_phone'] ?? '');
+    $form->addSubmit('submit', 'Uložit změny');
+
+    $form->onSuccess[] = [$this, 'adminEmailFormSucceeded'];
+    return $form;
+}
+
+public function adminEmailFormSucceeded(Form $form, $values): void
+{
+    $this->emailFacade->updateTemplate('admin_notification', [
+        'subject' => $values->subject,
+        'body' => $values->body,
+        'recipient_email' => $values->recipient_email,
+        'admin_phone' => $values->admin_phone,
+    ]);
+    $this->flashMessage('Šablona pro administrátora byla aktualizována.', 'success');
+    $this->redirect('this');
+}
 }
