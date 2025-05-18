@@ -1,7 +1,10 @@
 {block content}
-<h1>Registrace</h1>
+<!-- Ensure viewport meta tag is in <head> for proper scaling -->
+<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+
+<h1 class="text-center mb-4">Registrace</h1>
 <p class="mt-3 text-center">
-  <a href="{link Dashboard:default}" class="btn btn-secondary">← Zpět na Nástěnku</a>
+  <a href="{link Dashboard:default}" class="btn btn-secondary btn-lg  px-4">← Zpět na Nástěnku</a>
 </p>
 
 <div class="accordion" id="coursesAccordion">
@@ -9,27 +12,29 @@
     {foreach $courses as $course}
       <div class="accordion-item">
         <h2 class="accordion-header" id="heading{$course->id}">
-          <button class="accordion-button {if !$iterator->first}collapsed{/if}" type="button" data-bs-toggle="collapse" 
-                  data-bs-target="#collapse{$course->id}" aria-expanded="{if $iterator->first}true{else}false{/if}" 
+          <button class="accordion-button {if !$iterator->first}collapsed{/if}" type="button" 
+                  data-bs-toggle="collapse" data-bs-target="#collapse{$course->id}" 
+                  aria-expanded="{if $iterator->first}true{else}false{/if}" 
                   aria-controls="collapse{$course->id}">
-            {$course->name} (Celkem: {$courseCounts[$course->id]['total'] ?? 0}, Nepřijato: {$courseCounts[$course->id]['unaccepted'] ?? 0})
+            {$course->name} <br class="d-md-none">
+            <small>(Celkem: {$courseCounts[$course->id]['total'] ?? 0}, Nepřijato: {$courseCounts[$course->id]['unaccepted'] ?? 0})</small>
           </button>
         </h2>
         <div id="collapse{$course->id}" class="accordion-collapse collapse {if $iterator->first}show{/if}" 
              aria-labelledby="heading{$course->id}" data-bs-parent="#coursesAccordion">
           <div class="accordion-body">
             <div class="table-responsive">
-              <table class="table table-striped table-bordered">
-                <thead>
+              <table class="table table-striped table-bordered table-hover align-middle">
+                <thead class="table-light">
                   <tr>
-                    <th>ID</th>
-                    <th>Jméno</th>
-                    <th>Adresa</th>
-                    <th>Email</th>
-                    <th>Telefon</th>
-                    <th>Status</th>
-                    <th>Datum registrace</th>
-                    <th>Akce</th>
+                    <th scope="col" class="d-none d-md-table-cell">ID</th>
+                    <th scope="col">Jméno</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Adresa</th>
+                    <th scope="col" class="d-none d-md-table-cell">Email</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Telefon</th>
+                    <th scope="col">Status</th>
+                    <th scope="col" class="d-none d-md-table-cell">Datum</th>
+                    <th scope="col">Akce</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -37,25 +42,35 @@
                   {if !empty($registrations)}
                     {foreach $registrations as $registration}
                       <tr>
-                        <td>{$registration->id}</td>
-                        <td>{$registration->name}</td>
-                        <td>{$registration->address}</td>
-                        <td>{$registration->email}</td>
-                        <td>{$registration->phone}</td>
-                        <td>{if $registration->accepted}Přijato{else}Nepřijato{/if}</td>
-                        <td>{$registration->created_at|date:'d.m.Y H:i'}</td>
+                        <td class="d-none d-md-table-cell">{$registration->id}</td>
                         <td>
-                          {if !$registration->accepted}
-                            <a href="{link accept $registration->id}" class="btn btn-sm btn-success" title="Přijmout">✔</a>
-                          {/if}
-                          <a href="{link delete $registration->id}" class="btn btn-sm btn-danger" title="Odstranit"
-                             onclick="return confirm('Opravdu chcete odstranit tuto registraci?');">🗑</a>
+                          {$registration->name}
+                          <div class="d-md-none small">
+                            <div>Email: {$registration->email}</div>
+                            <div class="d-lg-none">Adresa: {$registration->address}</div>
+                            <div class="d-lg-none">Telefon: {$registration->phone}</div>
+                            <div class="d-md-none">Datum: {$registration->created_at|date:'d.m.Y H:i'}</div>
+                          </div>
+                        </td>
+                        <td class="d-none d-lg-table-cell">{$registration->address}</td>
+                        <td class="d-none d-md-table-cell">{$registration->email}</td>
+                        <td class="d-none d-lg-table-cell">{$registration->phone}</td>
+                        <td>{if $registration->accepted}Přijato{else}Nepřijato{/if}</td>
+                        <td class="d-none d-md-table-cell">{$registration->created_at|date:'d.m.Y H:i'}</td>
+                        <td>
+                          <div class="d-flex gap-2">
+                            {if !$registration->accepted}
+                              <a href="{link accept $registration->id}" class="btn btn-sm btn-success" title="Přijmout">✔</a>
+                            {/if}
+                            <a href="{link delete $registration->id}" class="btn btn-sm btn-danger" title="Odstranit"
+                               onclick="return confirm('Opravdu chcete odstranit tuto registraci?');">🗑</a>
+                          </div>
                         </td>
                       </tr>
                     {/foreach}
                   {else}
                     <tr>
-                      <td colspan="8" class="text-center">Žádné registrace pro tento kurz.</td>
+                      <td colspan="8" class="text-center py-3">Žádné registrace pro tento kurz.</td>
                     </tr>
                   {/if}
                 </tbody>
@@ -66,7 +81,59 @@
       </div>
     {/foreach}
   {else}
-    <p class="text-center">Žádné kurzy nenalezeny.</p>
+    <p class="text-center py-4">Žádné kurzy nenalezeny.</p>
   {/ifset}
 </div>
+
+<style>
+/* Custom styles for mobile optimization */
+@media (max-width: 767.98px) {
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .accordion-button {
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+  }
+  
+  .table {
+    font-size: 0.85rem;
+  }
+  
+  .table-responsive {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .gap-2 {
+    gap: 0.5rem !important;
+  }
+}
+
+/* Ensure buttons are touch-friendly */
+.btn-sm {
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  line-height: 1.5;
+}
+
+/* Improve accordion readability */
+.accordion-button:not(.collapsed) {
+  background-color: #f8f9fa;
+}
+
+/* Scrollbar styling for table on mobile */
+.table-responsive::-webkit-scrollbar {
+  height: 8px;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: #adb5bd;
+  border-radius: 4px;
+}
+</style>
 {/block}

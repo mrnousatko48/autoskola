@@ -100,7 +100,7 @@ final class HomePresenter extends Nette\Application\UI\Presenter
             ->addRule(Form::PATTERN, 'Telefonní číslo musí být ve správném formátu.', '^[0-9\s+]*$')
             ->setHtmlAttribute('class', 'form-control');
 
-        $form->addSubmit('submit', 'Zaregistrovat se')
+        $form->addSubmit('submit', 'Rezervovat se')
             ->setHtmlAttribute('class', 'btn btn-primary');
 
         $form->onSuccess[] = [$this, 'registrationFormSucceded'];
