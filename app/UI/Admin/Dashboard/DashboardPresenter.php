@@ -228,8 +228,8 @@ public function createComponentAddCourseForm(): Form
         'content' => ['type' => 'textArea', 'label' => 'Podrobný obsah:', 'required' => false], // New field
         'price' => ['type' => 'text', 'label' => 'Cena:', 'required' => true],
         'location' => ['type' => 'text', 'label' => 'Adresa:', 'required' => true],
-        'start_date' => ['type' => 'text', 'label' => 'Začíná:', 'required' => true, 'htmlType' => 'date'],
-        'start_time' => ['type' => 'text', 'label' => 'Začátek času:', 'required' => true, 'htmlType' => 'time'],
+        'start_date' => ['type' => 'text', 'label' => 'Datum:', 'required' => true, 'htmlType' => 'date'],
+        'start_time' => ['type' => 'text', 'label' => 'Od:', 'required' => true, 'htmlType' => 'time'],
     ];
 
     $form->addUpload('image', 'Obrázek:')

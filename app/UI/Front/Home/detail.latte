@@ -16,16 +16,11 @@
   <div class="container">
       <h1>{$course->name}</h1>
       <p><strong>Místo konání:</strong> {$course->location}</p>
-      <p>
-          <strong>Aktuální termín začátku:</strong>
-          {$course->start_date|date:'d.m.Y'} od {$course->start_date|date:'H:i'}h
-      </p>
+      <p><strong>Aktuální termín začátku:</strong> {$formattedStart}</p>
       <p><strong>Cena kurzu:</strong> {$course->price} Kč</p>
 
       <p>
-        Tento kurz nabízí komplexní výuku zaměřenou na bezpečnost a praktické dovednosti.
-        Dozvíte se všechny potřebné informace a techniky pro úspěšné absolvování, přičemž
-        klademe důraz na individuální přístup a moderní metody výuky.
+        {$course->content}
       </p>
 
       <div class="row modern-columns">

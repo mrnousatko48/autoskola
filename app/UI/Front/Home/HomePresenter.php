@@ -23,6 +23,36 @@ final class HomePresenter extends Nette\Application\UI\Presenter
         $this->mailSender = $mailSender;
     }
 
+    public function beforeRender(): void
+    {
+        parent::beforeRender();
+
+        // Format start date and time for the course detail view
+        if ($this->course) {
+            // Handle start_date
+            $startDate = $this->course->start_date instanceof \DateTimeInterface
+                ? $this->course->start_date->format('d.m.Y')
+                : $this->course->start_date;
+
+            // Handle start_time, accounting for possible DateInterval or other types
+            $startTime = $this->course->start_time;
+            if ($startTime instanceof \DateInterval) {
+                // Convert DateInterval to HH:MM (e.g., PT2H30M -> "02:30")
+                $hours = $startTime->h;
+                $minutes = $startTime->i;
+                $startTime = sprintf('%02d:%02d', $hours, $minutes);
+            } elseif (is_string($startTime)) {
+                // Trim to HH:MM if it’s a string like "14:30:00"
+                $startTime = substr($startTime, 0, 5);
+            } else {
+                // Fallback if unexpected type
+                $startTime = 'Není zadán čas';
+            }
+
+            $this->template->formattedStart = "$startDate od {$startTime}h";
+        }
+    }
+
     public function renderDefault(): void
     {
         $this->template->hero = $this->pageFacade->getHeroSection();
@@ -44,7 +74,7 @@ final class HomePresenter extends Nette\Application\UI\Presenter
         $this->course = $this->pageFacade->getCourseById($courseId);
     }
 
-    public function renderDetail(int $courseId)
+    public function renderDetail(int $courseId): void
     {
         $this->template->course = $this->course;
     }
@@ -88,25 +118,33 @@ final class HomePresenter extends Nette\Application\UI\Presenter
                 'phone'     => $data->phone,
                 'course_id' => $this->course->id,
             ];
-    
+
             $this->EmailFacade->createRegistration($registrationData);
-    
+
             $courseStartDate = 'Není zadán datum';
             if ($this->course->start_date instanceof \DateTimeInterface) {
-                $courseStartDate = $this->course->start_date->format('d.m.Y') . ' od ' . $this->course->start_date->format('H:i') . 'h';
+                $courseStartDate = $this->course->start_date->format('d.m.Y');
+                // Handle start_time for email
+                $startTime = $this->course->start_time;
+                if ($startTime instanceof \DateInterval) {
+                    $startTime = sprintf('%02d:%02d', $startTime->h, $startTime->i);
+                } elseif (is_string($startTime)) {
+                    $startTime = substr($startTime, 0, 5);
+                }
+                $courseStartDate .= " od {$startTime}h";
             }
-    
+
             $this->mailSender->sendRegistrationEmail(
                 $data->email,
                 $data->name,
                 $this->course->name,
-                $data->address,         // Uživatelská adresa pro admina
-                $this->course->location, // Místo konání kurzu pro uživatele
+                $data->address,
+                $this->course->location,
                 $data->phone,
                 date('d.m.Y H:i'),
                 $courseStartDate
             );
-    
+
             $this->flashMessage('Registrace byla úspěšně odeslána🚗', 'success');
             $this->redirect('this');
         } catch (\Exception $e) {
