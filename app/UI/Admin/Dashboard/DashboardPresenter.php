@@ -534,7 +534,7 @@ public function createComponentAddCourseForm(): Form
         $form->addHidden('id')->setDefaultValue($course->id);
     
         if ($course->start_date instanceof \DateTimeInterface) {
-            $form->getComponent('start_date')->setDefaultValue($course->start_date->format('Y-m-d'));
+            $form->getComponent('start_date');
         }
     
         if ($form->getComponent('image', false)) {
