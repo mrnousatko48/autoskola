@@ -50,8 +50,9 @@ class PageFacade {
         return $this->database->table('offerings')->order('ordering ASC');
     }
 
-    public function getAllCourses() {
-        return $this->database->table('courses')->fetchAll();
+    public function getAllCourses(): array
+    {
+         return $this->database->table('courses')->fetchAll();
     }
 
     /**

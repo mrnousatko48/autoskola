@@ -111,7 +111,7 @@ final class UserFacade implements Authenticator
         $this->database->table(self::TableName)->insert([
             self::ColumnUsername => $username,
             self::ColumnPasswordHash => $hash,
-            self::ColumnRole => 'admin',
+            self::ColumnRole => 'pomocnik',
         ]);
     }
     

@@ -36,7 +36,7 @@ final class DashboardPresenter extends Presenter
     protected function startup(): void
     {
         parent::startup();
-        if (!$this->user->isLoggedIn() || !$this->user->isInRole('admin')) {
+        if (!$this->user->isLoggedIn()) {
             $this->flashMessage('Sem nemáš přístup🚫', 'danger');
             $this->redirect(':Front:Home:default');
         }
@@ -85,12 +85,6 @@ final class DashboardPresenter extends Presenter
     {
         $this->template->contact = $this->pageFacade->getContactInfo();
         $this->template->setFile(__DIR__ . '/Templates/contact.latte');
-    }
-
-    public function renderRegistrations(): void
-    {
-        $registrations = $this->emailFacade->getRegistrations();
-        $this->template->registrations = $registrations;
     }
 
     public function renderAdvantages(): void

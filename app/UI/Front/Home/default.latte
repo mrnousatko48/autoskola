@@ -79,7 +79,7 @@
           <table class="table table-bordered">
             <thead>
               <tr>
-                <th>Položka</th>
+                <th>Polo otrzymky</th>
                 <th>Cena</th>
               </tr>
             </thead>
@@ -109,8 +109,7 @@
       <div class="row justify-content-center">
         {foreach $courses as $course}
           <div class="col-md-4 mb-4">
-            <div class="card h-100 position-relative">
-            
+            <a href="{link 'detail', courseId => $course->id}" class="card h-100 position-relative text-decoration-none">
               <!-- Ribbon (shown only if show_ribbon is true) -->
               {if $course->show_ribbon}
                 <div class="ribbon">
@@ -130,11 +129,9 @@
               <div class="card-body">
                 <h5 class="card-title">{$course->name}</h5>
                 <p class="card-text">{$course->description}</p>
-                <a href="{link 'detail', courseId => $course->id}" class="btn btn-primary">
-                  Zjistit více
-                </a>
+                <span class="btn btn-primary">Zjistit více</span>
               </div>
-            </div>
+            </a>
           </div>
         {/foreach}
       </div>

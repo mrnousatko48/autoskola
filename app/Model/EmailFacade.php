@@ -22,12 +22,6 @@ class EmailFacade
         }
     }
 
-    // Optional: Method to fetch registrations (e.g., for admin purposes)
-    public function getRegistrations()
-    {
-        return $this->database->table('registrations')->fetchAll();
-    }
-
     public function getTemplateByName(string $name): array
     {
         $template = $this->database->table('email_templates')->where('name', $name)->fetch();
@@ -42,5 +36,24 @@ class EmailFacade
     public function updateTemplate(string $name, array $data): void
     {
         $this->database->table('email_templates')->where('name', $name)->update($data);
+    }
+
+    public function getAllRegistrations(): array
+    {
+        return $this->database->table('registrations')->fetchAll();
+    }
+
+    public function acceptRegistration(int $registrationId): void
+    {
+        $this->database->table('registrations')
+            ->where('id', $registrationId)
+            ->update(['accepted' => true]);
+    }
+
+    public function deleteRegistration(int $registrationId): void
+    {
+        $this->database->table('registrations')
+            ->where('id', $registrationId)
+            ->delete();
     }
 }

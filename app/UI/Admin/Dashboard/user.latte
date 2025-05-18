@@ -37,8 +37,13 @@
             <td>{$userItem->username}</td>
             <td>{$userItem->role}</td>
             <td class="text-center">
+              {* Check if the logged-in user can delete this account *}
               {if $presenter->user->getIdentity()->id !== $userItem->id}
-                <a href="{link Dashboard:deleteUser, id => $userItem->id}" class="btn btn-sm btn-danger" onclick="return confirm('Opravdu chcete odstranit tohoto uživatele?');">Smazat</a>
+                {if $presenter->user->getIdentity()->role === 'admin' || ($presenter->user->getIdentity()->role === 'pomocnik' && $userItem->role !== 'admin')}
+                  <a href="{link Dashboard:deleteUser, id => $userItem->id}" class="btn btn-sm btn-danger" onclick="return confirm('Opravdu chcete odstranit tohoto uživatele?');">Smazat</a>
+                {else}
+                  <span>Nemáte Práva</span>
+                {/if}
               {else}
                 <span>Není k dispozici</span>
               {/if}
