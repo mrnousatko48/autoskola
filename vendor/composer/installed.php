@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'nette/web-project',
-        'pretty_version' => 'v3.3.0',
-        'version' => '3.3.0.0',
-        'reference' => null,
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '161c9b58166c0db4ccbe868ec5924ba23d750f45',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -173,9 +173,9 @@
             'dev_requirement' => false,
         ),
         'nette/web-project' => array(
-            'pretty_version' => 'v3.3.0',
-            'version' => '3.3.0.0',
-            'reference' => null,
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '161c9b58166c0db4ccbe868ec5924ba23d750f45',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -191,9 +191,9 @@
             'dev_requirement' => true,
         ),
         'tracy/tracy' => array(
-            'pretty_version' => 'v2.10.9',
-            'version' => '2.10.9.0',
-            'reference' => 'e7af75205b184ca8895bc57fafd331f8d5022d26',
+            'pretty_version' => 'v2.10.10',
+            'version' => '2.10.10.0',
+            'reference' => '32303e02c222eea8571402a8310fc3fe70422c37',
             'type' => 'library',
             'install_path' => __DIR__ . '/../tracy/tracy',
             'aliases' => array(),

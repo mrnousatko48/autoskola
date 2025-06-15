@@ -141,6 +141,25 @@ public function updateOffer(int $id, array $values): void {
 }
 public function deleteCourse(int $id): void
 {
-    $this->database->table('courses')->get($id)->delete();
+    // Načti kurz
+    $course = $this->database->table('courses')->get($id);
+    if ($course) {
+        // Odstraň obrázek, pokud existuje
+        if ($course->image) {
+            // Cesta k webové složce, uprav podle svého prostředí
+            $webRoot = '/root/autoskola/web';
+
+            // Vytvoř plnou cestu k souboru
+            $imagePath = $webRoot . $course->image;
+
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+        }
+
+        // Smaž kurz z DB
+        $course->delete();
+    }
 }
+
 }

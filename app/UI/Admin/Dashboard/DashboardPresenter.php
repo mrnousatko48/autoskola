@@ -602,11 +602,11 @@ public function createComponentAddCourseForm(): Form
             $pdfPaths = [];
             if (!empty($values->pdf_files)) {
                 $files = is_array($values->pdf_files) ? $values->pdf_files : [$values->pdf_files];
-                $uploadDir = realpath(__DIR__ . '/../../../www/uploads/pdf');
+                $uploadDir = realpath(__DIR__ . '/../../../web/uploads/pdf');
                 
                 // Kontrola, zda adresář existuje, pokud ne, vytvořit ho
                 if ($uploadDir === false) {
-                    $uploadDir = __DIR__ . '/../../../www/uploads/pdf';
+                    $uploadDir = __DIR__ . '/../../../web/uploads/pdf';
                     if (!is_dir($uploadDir)) {
                         mkdir($uploadDir, 0777, true); // Vytvoří adresář rekurzivně
                     }

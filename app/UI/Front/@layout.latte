@@ -21,40 +21,52 @@
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-      <div class="container">
-        <a class="navbar-brand" n:href="Home:default">Autoškola PRIMA</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Přepnout navigaci">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link" n:href="Home:default">Domů</a></li>
-            <li class="nav-item"><a class="nav-link" href="#about">O nás</a></li>
-            <li class="nav-item"><a class="nav-link" href="#nabizime">Nabízíme</a></li>
-            <li class="nav-item"><a class="nav-link" href="#cenik">Ceník</a></li>
-            <li class="nav-item"><a class="nav-link" href="#courses">Kurzy</a></li>
-            <li class="nav-item"><a class="nav-link" href="#contact">Kontakt</a></li>
+  <div class="container">
+    <a class="navbar-brand" n:href="Home:default">Autoškola PRIMA</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Přepnout navigaci">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+<ul class="navbar-nav ms-auto">
+    <li class="nav-item">
+        <a class="nav-link {if $presenter->isLinkCurrent('Home:default') && !$presenter->getParameter('hash')}active{/if}" n:href="Home:default">Domů</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {if $presenter->getParameter('hash') == 'onas'}active{/if}" n:href="Home:default#onas">O nás</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {if $presenter->getParameter('hash') == 'nabizime'}active{/if}" n:href="Home:default#nabizime">Nabízíme</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {if $presenter->getParameter('hash') == 'cenik'}active{/if}" n:href="Home:default#cenik">Ceník</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {if $presenter->getParameter('hash') == 'kurzy'}active{/if}" n:href="Home:default#kurzy">Kurzy</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {if $presenter->getParameter('hash') == 'kontakt'}active{/if}" n:href="Home:default#kontakt">Kontakt</a>
+    </li>
+</ul>
+      <!-- Login Button for guests -->
+      <div n:if="!$user->isLoggedIn()" class="ms-3">
+        <a n:href="Sign:in" class="btn btn-outline-light">Přihlásit se</a>
+      </div>
+      <!-- Dropdown for logged-in user -->
+      <div n:if="$user->isLoggedIn()" class="ms-3">
+        <div class="dropdown">
+          <a class="btn btn-secondary dropdown-toggle" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+             {$user->identity->username}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item text-primary" n:href=":Admin:Dashboard:default">Administrace</a></li>
+            <li><a class="dropdown-item text-danger" n:href="Sign:out">Odhlásit se</a></li>
           </ul>
-          <!-- Login Button for guests -->
-          <div n:if="!$user->isLoggedIn()" class="ms-3">
-            <a n:href="Sign:in" class="btn btn-outline-light">Přihlásit se</a>
-          </div>
-          <!-- Dropdown for logged-in user -->
-          <div n:if="$user->isLoggedIn()" class="ms-3">
-            <div class="dropdown">
-              <a class="btn btn-secondary dropdown-toggle" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                 {$user->identity->username}
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                <li><a class="dropdown-item text-primary" n:href=":Admin:Dashboard:default">Administrace</a></li>
-                <li><a class="dropdown-item text-danger" n:href="Sign:out">Odhlásit se</a></li>
-              </ul>
-            </div>
-          </div>
         </div>
       </div>
-    </nav>
+    </div>
+  </div>
+</nav>
 
     {if $flashes}
       {foreach $flashes as $flash}
@@ -97,5 +109,25 @@
     </footer>
 
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script>
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      // Only apply to same-page anchor links
+      if (this.getAttribute('href').startsWith('#') && this.getAttribute('n:href') === null) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 70, // Adjust for fixed navbar height
+            behavior: 'smooth'
+          });
+        }
+      }
+    });
+  });
+</script>
+</body>
+
 
 </html>

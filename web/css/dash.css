@@ -1,0 +1,105 @@
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f7fa;
+  color: #333;
+}
+
+/* Dashboard container */
+.dashboard-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.dashboard-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #1a3c6d;
+}
+
+.dashboard-container p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  color: #555;
+}
+
+/* Dashboard menu (grid layout) */
+.dashboard-menu {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  justify-items: center;
+}
+
+/* Section card */
+.section-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 400px;
+  text-align: left;
+  transition: transform 0.2s ease;
+}
+
+.section-card:hover {
+  transform: translateY(-5px);
+}
+
+.section-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #1a3c6d;
+}
+
+/* Button group */
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary {
+  background-color: #1a3c6d;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: #2a5c9d;
+  transform: scale(1.02);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-container h1 {
+    font-size: 2rem;
+  }
+
+  .dashboard-menu {
+    grid-template-columns: 1fr;
+  }
+
+  .section-card {
+    max-width: 100%;
+  }
+}

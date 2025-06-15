@@ -92,7 +92,7 @@ class MailSender
              ->setHtmlBody($html);
         
         // Přidání PDF příloh z databáze
-        $baseDir = realpath(__DIR__ . '/../../www'); // Od MailSender do www
+        $baseDir = realpath(__DIR__ . '/../../web'); // Od MailSender do www
         foreach ($template['pdf_paths'] as $pdfPath) {
             $fullPath = $baseDir . $pdfPath;
             if (file_exists($fullPath)) {
