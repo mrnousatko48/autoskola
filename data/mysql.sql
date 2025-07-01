@@ -136,7 +136,7 @@ CREATE TABLE `registrations` (
 
 INSERT INTO `registrations` (`id`, `name`, `address`, `email`, `phone`, `course_id`, `created_at`) VALUES
 (22,	'Martin Burda',	'shrekova bazina 13',	'xmanmartinburda@seznam.cz',	'666777888',	1,	'2025-03-09 09:53:59'),
-(24,	'Martin Burda',	'shrekova bazina 13',	'burdadko.cz@gmail.com',	'666777888',	1,	'2025-03-09 09:57:47');
+(24,	'Martin Burda',	'shrekova bazina 13',	'autoskolaprima@email.czz@gmail.com',	'666777888',	1,	'2025-03-09 09:57:47');
 
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (

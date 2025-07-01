@@ -12,43 +12,31 @@
 </head>
 <body>
   <!-- Hero Preview -->
-  <header class="hero">
-    <div class="container">
-      <h1 class="display-4">{$hero->heading}</h1>
-      <p class="lead">{$hero->subheading}</p>
-      <a href="{$hero->button_link}" class="btn btn-primary btn-lg">{$hero->button_text}</a>
+  <header class="hero py-4 py-md-5" aria-labelledby="hero-heading">
+    <div class="container text-center">
+      <h1 id="hero-heading" class="display-5 fs-3 fs-md-2">{$hero->heading}</h1>
+      <p class="lead fs-5">{$hero->subheading}</p>
+      <a href="{$hero->button_link}" class="btn btn-primary btn-lg w-100 w-md-auto" aria-label="{$hero->button_text}">{$hero->button_text}</a>
     </div>
   </header>
 
   <!-- Edit Form for Hero Section -->
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <h2 class="mb-4 text-center">Upravit hlavní sekci</h2>
-         <p class="mt-3 text-center">
-          <a href="{link Dashboard:default}" class="btn btn-secondary">← Zpět na Nástěnku</a>
-        </p>
-        <div class="card">
-          <div class="card-body">
-            {control heroForm}
+  <section class="edit-form py-4 py-md-5" aria-labelledby="edit-hero-heading">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-8">
+          <h2 id="edit-hero-heading" class="mb-4 text-center fs-3 fs-md-2">Upravit hlavní sekci</h2>
+          <p class="mt-3 text-center">
+            <a href="{link Dashboard:default}" class="btn btn-secondary btn-lg w-100 w-md-auto" aria-label="Zpět na nástěnku">← Zpět na Nástěnku</a>
+          </p>
+          <div class="card shadow-sm p-3">
+            <div class="card-body">
+              {control heroForm}
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-
-  <script>
-    // Enhance form controls with Bootstrap styling after the form is rendered.
-    document.addEventListener("DOMContentLoaded", function(){
-      document.querySelectorAll(".card-body form input:not([type='hidden']), .card-body form textarea, .card-body form select")
-      .forEach(function(field){
-         field.classList.add("form-control");
-      });
-      document.querySelectorAll(".card-body form input[type='submit']")
-      .forEach(function(btn){
-         btn.classList.add("btn", "btn-primary");
-      });
-    });
-  </script>
+  </section>
 </body>
 </html>

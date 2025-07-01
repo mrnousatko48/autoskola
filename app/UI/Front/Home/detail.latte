@@ -14,52 +14,65 @@
 
 {block content}
   <div class="container">
-      <h1>{$course->name}</h1>
-      <p><strong>Místo konání:</strong> {$course->location}</p>
-      <p><strong>Aktuální termín začátku:</strong> {$formattedStart}</p>
-      <p><strong>Cena kurzu:</strong> {$course->price} Kč</p>
-
-      <p>
+    <h1 class="mb-4">{$course->name}</h1>
+    <div class="course-details-card mb-4">
+      <dl class="row">
+        <div class="col-md-6">
+          <dt class="detail-label">Místo konání:</dt>
+          <dd class="detail-value">{$course->location}</dd>
+        </div>
+        <div class="col-md-6">
+          <dt class="detail-label">Aktuální termín začátku:</dt>
+          
+          <dd class="detail-value">{$formattedStart}</dd>
+        </div>
+        <div class="col-md-6">
+          <dt class="detail-label">Cena kurzu:</dt>
+          <dd class="detail-value">{$course->price} Kč</dd>
+        </div>
+      </dl>
+      <div class="course-content">
         {$course->content}
-      </p>
-
-      <div class="row modern-columns">
-          <div class="col-md-8">
-              <div class="modern-container">
-                  <h3>Přihláška na kurz</h3>
-                  {form registrationForm}
-                      <div class="form-group">
-                          <label for="name">Jméno:</label>
-                          {input name}
-                      </div>
-                      <div class="form-group">
-                          <label for="address">Adresa:</label>
-                          {input address}
-                      </div>
-                      <div class="form-group">
-                          <label for="email">E-mail:</label>
-                          {input email}
-                      </div>
-                      <div class="form-group">
-                          <label for="phone">Telefon:</label>
-                          {input phone}
-                      </div>
-                      {input submit}
-                  {/form}
-                  <p class="contact-highlight">
-                      Doporučujeme si místo v kurzu rezervovat telefonicky.
-                  </p>
-              </div>
-          </div>
-          <div class="col-md-4">
-              <div class="modern-container contact-container">
-                  <h3>Nebo nás kontaktujte</h3>
-                  <p class="big-phone">
-                      tel. <a href="tel:737314477">737 314 477</a>
-                  </p>
-                  <p class="small-text">Těšíme se na Vás v naší autoškole!</p>
-              </div>
-          </div>
       </div>
+    </div>
+
+    <div class="row modern-columns">
+      <div class="col-md-8">
+        <div class="modern-container">
+          <h3>Přihláška na kurz</h3>
+          {form registrationForm}
+            <div class="form-group">
+              <label for="name">Jméno:</label>
+              {input name}
+            </div>
+            <div class="form-group">
+              <label for="address">Adresa:</label>
+              {input address}
+            </div>
+            <div class="form-group">
+              <label for="email">E-mail:</label>
+              {input email}
+            </div>
+            <div class="form-group">
+              <label for="phone">Telefon:</label>
+              {input phone}
+            </div>
+            {input submit}
+          {/form}
+          <div class="contact-highlight">
+            Doporučujeme si místo v kurzu rezervovat telefonicky.
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="modern-container contact-container">
+          <h3>Nebo nás kontaktujte</h3>
+          <p class="big-phone">
+            tel. <a href="tel:737314477">737 314 477</a>
+          </p>
+          <p class="small-text">Těšíme se na Vás v naší autoškole!</p>
+        </div>
+      </div>
+    </div>
   </div>
 {/block}

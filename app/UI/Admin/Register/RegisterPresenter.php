@@ -97,16 +97,16 @@ final class RegisterPresenter extends Presenter
         $this->template->paginationInfo = $paginationInfo;
     }
 
-    public function actionAccept(int $registrationId): void
-    {
-        try {
-            $this->emailFacade->acceptRegistration($registrationId);
-            $this->flashMessage('Uživatel byl přijat.', 'success');
-        } catch (\Exception $e) {
-            $this->flashMessage('Chyba při přijímání uživatele.', 'danger');
-        }
-        $this->redirect('this');
+public function actionAccept(int $registrationId): void
+{
+    try {
+        $this->emailFacade->acceptRegistration($registrationId);
+        $this->flashMessage('Uživatel byl přijat.', 'success');
+    } catch (\Exception $e) {
+        $this->flashMessage('Chyba při přijímání uživatele.', 'danger');
     }
+    $this->redirect('default');
+}
 
     public function actionDelete(int $registrationId): void
     {
@@ -116,6 +116,6 @@ final class RegisterPresenter extends Presenter
         } catch (\Exception $e) {
             $this->flashMessage('Chyba při odstraňování uživatele.', 'danger');
         }
-        $this->redirect('this');
+        $this->redirect('default');
     }
 }

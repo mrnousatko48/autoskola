@@ -3,7 +3,7 @@
   position: relative;
   background-size: cover;
   background-position: center;
-  height: 300px; /* Adjust height as needed */
+  height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,7 +16,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5); /* Creates a dark overlay */
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -29,29 +29,64 @@
   margin: 0;
 }
 
+/* ======= Course Details Card ======= */
+.course-details-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+  font-size: 1rem;
+}
+
+.detail-value {
+  margin: 0 0 15px 0;
+  color: #555;
+  font-size: 1rem;
+  padding-left: 10px;
+  border-left: 3px solid #007bff;
+}
+
+.course-content {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  border-left: 5px solid #007bff;
+  color: #333;
+  line-height: 1.6;
+}
+
 /* ======= Moderní kontejnery pro sloupce ======= */
 .modern-columns {
   margin-top: 30px;
-  display: flex; /* Zajistí, že sloupce budou mít stejnou výšku */
-  flex-wrap: wrap; /* Pro responzivitu */
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .modern-container {
-  background: #fff; /* Bílé pozadí pro čistý vzhled */
-  border-radius: 10px; /* Zaoblené rohy */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Jemný stín */
-  padding: 20px; /* Vnitřní odsazení */
-  border: 1px solid #e0e0e0; /* Jemný rámeček */
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Obsah se rovnoměrně rozloží */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Plynulý přechod pro interakce */
-  height: 100%; /* Zajistí stejnou výšku sloupců */
+  justify-content: space-between;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
 }
 
 .modern-container:hover {
-  transform: translateY(-5px); /* Lehké zvednutí při přejetí myší */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Silnější stín při přejetí */
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .modern-container h3 {
@@ -59,21 +94,21 @@
   color: #333;
   margin-bottom: 20px;
   font-weight: 600;
-  border-bottom: 2px solid #007bff; /* Modrá čára pod nadpisem */
+  border-bottom: 2px solid #007bff;
   padding-bottom: 10px;
 }
 
 /* Specifické styly pro kontaktní kontejner */
 .contact-container {
-  padding: 8px; /* Reduced from 15px for a more compact layout */
-  height: auto; /* Ensure height adjusts to content */
+  padding: 8px;
+  height: auto;
 }
 
 .contact-container .big-phone {
-  font-size: 1.5rem; /* Reduced from 2.5rem to cut height */
+  font-size: 1.5rem;
   font-weight: bold;
   color: #007bff;
-  margin: 10px 0; /* Reduced margin for compactness */
+  margin: 10px 0;
   text-align: center;
 }
 
@@ -90,7 +125,7 @@
 .contact-container .small-text {
   font-size: 0.9rem;
   color: #555;
-  margin-top: 5px; /* Reduced from auto to tighten layout */
+  margin-top: 5px;
   text-align: center;
 }
 
@@ -109,12 +144,12 @@
   border: 1px solid #ced4da;
   padding: 10px;
   transition: border-color 0.3s ease;
-  width: 100%; /* Zajistí, že inputy vyplní celou šířku */
+  width: 100%;
 }
 
 .form-control:focus {
   border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Modré zvýraznění při zaměření */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 .btn-primary {
@@ -124,7 +159,7 @@
   padding: 10px 20px;
   font-weight: 600;
   transition: background-color 0.3s ease;
-  width: 100%; /* Tlačítko vyplní celou šířku pro konzistentní vzhled */
+  width: 100%;
 }
 
 .btn-primary:hover {
@@ -137,7 +172,7 @@
   border-left: 5px solid #007bff;
   padding: 10px 15px;
   background-color: #f1f8ff;
-  margin: 20px 0 0 0; /* Mezera pouze nahoře, aby se zarovnalo s formulářem */
+  margin: 20px 0 0 0;
   font-weight: bold;
   border-radius: 5px;
 }
@@ -145,18 +180,22 @@
 /* Responzivní úpravy */
 @media (max-width: 768px) {
   .modern-columns {
-      flex-direction: column; /* Sloupce se na mobilu zobrazí pod sebou */
+    flex-direction: column;
   }
 
   .modern-container {
-      margin-bottom: 20px; /* Mezera mezi sloupci na mobilních zařízeních */
+    margin-bottom: 20px;
   }
 
   .btn-primary {
-      width: auto; /* Na mobilu tlačítko nemusí být plné šířky */
+    width: auto;
   }
 
   .contact-container .big-phone {
-      font-size: 2rem; /* Menší velikost telefonního čísla na mobilu */
+    font-size: 2rem;
+  }
+
+  .course-details-card .row > div {
+    margin-bottom: 10px;
   }
 }

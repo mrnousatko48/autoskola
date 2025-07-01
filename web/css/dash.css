@@ -89,17 +89,23 @@ body {
   transform: scale(1.02);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .dashboard-container h1 {
-    font-size: 2rem;
-  }
-
-  .dashboard-menu {
-    grid-template-columns: 1fr;
-  }
-
-  .section-card {
-    max-width: 100%;
-  }
+.btn-secondary {
+  background-color: #6c757d;
+  color: #fff;
 }
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  transform: scale(1.02);
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+  transform: scale(1.02);
+}
+

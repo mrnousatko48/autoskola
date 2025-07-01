@@ -1,59 +1,113 @@
 {block content}
-<div class="container mt-5">
-  {if $presenter->getParameter('id')}
-    <div class="card">
-      <div class="card-header bg-primary text-white">
-        <h3 class="mb-0">Upravit kurz</h3>
-      </div>
-      <div class="card-body">
-        {control courseForm}
-      </div>
-      <div class="card-footer text-end">
-        <a href="{link Dashboard:courses}" class="btn btn-secondary">← Zpět na seznam kurzů</a>
-      </div>
+  <section class="courses py-4 py-md-5" aria-labelledby="courses-heading">
+    <div class="container">
+      {if $presenter->getParameter('id')}
+        <!-- Edit Course Form -->
+        <div class="card shadow-sm p-3">
+          <div class="card-header bg-primary text-white">
+            <h3 id="edit-course-heading" class="mb-0 fs-3 fs-md-2">Upravit kurz</h3>
+          </div>
+          <div class="card-body">
+            {control courseForm}
+            <div id="image-preview" style="display: none;">
+              <img id="image" src="" alt="Image Preview" style="max-width: 100%;">
+              <button type="button" id="crop-button" class="btn btn-primary mt-2">Oříznout obrázek</button>
+            </div>
+          </div>
+          <div class="card-footer text-center text-md-end">
+            <a href="{link Dashboard:courses}" class="btn btn-secondary btn-lg w-100 w-md-auto" aria-label="Zpět na seznam kurzů">← Zpět na seznam kurzů</a>
+          </div>
+        </div>
+      {elseif $presenter->getParameter('action') === 'addCourse'}
+        <!-- Add Course Form -->
+        <div class="card shadow-sm p-3">
+          <div class="card-header bg-success text-white">
+            <h3 id="add-course-heading" class="mb-0 fs-3 fs-md-2">Přidat nový kurz</h3>
+          </div>
+          <div class="card-body">
+            {control addCourseForm}
+            <div id="image-preview" style="display: none;">
+              <img id="image" src="" alt="Image Preview" style="max-width: 100%;">
+              <button type="button" id="crop-button" class="btn btn-primary mt-2">Oříznout obrázek</button>
+            </div>
+          </div>
+          <div class="card-footer text-center text-md-end">
+            <a href="{link Dashboard:courses}" class="btn btn-secondary btn-lg w-100 w-md-auto" aria-label="Zpět na seznam kurzů">← Zpět na seznam kurzů</a>
+          </div>
+        </div>
+      {else}
+        <!-- Courses List -->
+        <h1 id="courses-heading" class="text-center mb-4 fs-3 fs-md-2">Kurzy</h1>
+        <p class="mb-4 text-center d-flex flex-column flex-md-row gap-2 justify-content-center">
+          <a href="{link Dashboard:default}" class="btn btn-secondary btn-lg w-100 w-md-auto" aria-label="Zpět na nástěnku">← Zpět na Nástěnku</a>
+          <a href="{link Dashboard:addCourse}" class="btn btn-success btn-lg w-100 w-md-auto" aria-label="Přidat nový kurz">Nový kurz</a>
+        </p>
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Obrázek</th>
+                <th scope="col">Název</th>
+                <th scope="col">Popis</th>
+                <th scope="col">Akce</th>
+              </tr>
+            </thead>
+            <tbody>
+              {foreach $courses as $c}
+                <tr>
+                  <td><img src="{$c->image}" alt="{$c->name}" class="img-fluid rounded" style="max-width: 80px;"></td>
+                  <td class="fs-5">{$c->name}</td>
+                  <td class="fs-5">{$c->description|truncate:80}</td>
+                  <td>
+                    <div class="d-flex flex-column gap-2">
+                      <a href="{link Dashboard:courses, id => $c->id}" class="btn btn-primary btn-md w-100" aria-label="Upravit kurz {$c->name}">Upravit</a>
+                      <a href="{link Dashboard:deleteCourse, id => $c->id}" class="btn btn-danger btn-md w-100" 
+                         onclick="return confirm('Opravdu chcete smazat kurz {$c->name}?')" aria-label="Smazat kurz {$c->name}">Smazat</a>
+                    </div>
+                  </td>
+                </tr>
+              {/foreach}
+            </tbody>
+          </table>
+        </div>
+      {/if}
     </div>
-{elseif $presenter->getParameter('action') === 'addCourse'}
-    <div class="card">
-      <div class="card-header bg-success text-white">
-        <h3 class="mb-0">Přidat nový kurz</h3>
-      </div>
-      <div class="card-body">
-        {control addCourseForm}
-      </div>
-      <div class="card-footer text-end">
-        <a href="{link Dashboard:courses}" class="btn btn-secondary">← Zpět na seznam kurzů</a>
-      </div>
-    </div>
-  {else}
-    <h1>Kurzy</h1>
-    <p>
-      <a href="{link Dashboard:default}" class="btn btn-secondary">← Zpět na Nástěnku</a>
-      <a href="{link Dashboard:addCourse}" class="btn btn-success ms-2">Nový kurz</a>
-    </p>
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>Obrázek</th>
-          <th>Název</th>
-          <th>Popis</th>
-          <th>Akce</th>
-        </tr>
-      </thead>
-      <tbody>
-        {foreach $courses as $c}
-          <tr>
-            <td><img src="{$c->image}" alt="{$c->name}" style="max-width:100px;"></td>
-            <td>{$c->name}</td>
-            <td>{$c->description|truncate:80}</td>
-            <td>
-              <a href="{link Dashboard:courses, id => $c->id}" class="btn btn-sm btn-primary">Upravit</a>
-              <a href="{link Dashboard:deleteCourse, id => $c->id}" class="btn btn-sm btn-danger" 
-                 onclick="return confirm('Opravdu chcete smazat kurz {$c->name}?')">Smazat</a>
-            </td>
-          </tr>
-        {/foreach}
-      </tbody>
-    </table>
-  {/if}
-</div>
+  </section>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/cs.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      flatpickr.localize(flatpickr.l10ns.cs); // Set Czech locale
+
+      // Date picker for start_date
+      flatpickr('#frm-courseForm-start_date, #frm-addCourseForm-start_date', {
+        dateFormat: 'Y-m-d',
+        defaultDate: document.querySelector('#frm-courseForm-start_date')?.value || document.querySelector('#frm-addCourseForm-start_date')?.value || '2025-07-01',
+        minDate: '2025-01-01',
+        maxDate: '2026-12-31',
+        onChange: function(selectedDates, dateStr, instance) {
+          instance.input.value = dateStr;
+        }
+      });
+
+      // Enhanced time picker for start_time
+      flatpickr('#frm-courseForm-start_time, #frm-addCourseForm-start_time', {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: 'H:i:S',
+        time_24hr: true,
+        defaultDate: document.querySelector('#frm-courseForm-start_time')?.value || document.querySelector('#frm-addCourseForm-start_time')?.value || '21:03:00',
+        minTime: '00:00',
+        maxTime: '23:59',
+        minuteIncrement: 15,
+        time_24hr: true,
+        plugins: [new flatpickr.plugins.TimeDropdown()],
+        onChange: function(selectedDates, dateStr, instance) {
+          instance.input.value = dateStr;
+        }
+      });
+    });
+  </script>
+  <script src="/js/cropper.js"></script>
 {/block}

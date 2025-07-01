@@ -1,47 +1,41 @@
 {block content}
-  <!-- About Preview Section (mimics default.latte style) -->
-  <section id="about" class="about-us py-5">
+  <!-- About Preview Section -->
+  <section id="about" class="about-us py-4 py-md-5" aria-labelledby="about-heading">
     <div class="container">
-      <h2 class="text-center mb-4">{$about->heading}</h2>
-       <p class="mt-3 text-center">
-          <a href="{link Dashboard:default}" class="btn btn-secondary">← Zpět na Nástěnku</a>
-        </p>
-      <div class="row align-items-center">
-        <div class="col-md-6">
-          <img src="{$about->image}" alt="{$about->alt_text}" class="img-fluid rounded" loading="lazy">
+      <h2 id="about-heading" class="text-center mb-4 fs-3 fs-md-2">{$about->heading}</h2>
+      <p class="mt-3 text-center">
+        <a href="{link Dashboard:default}" class="btn btn-secondary btn-lg w-100 w-md-auto" aria-label="Zpět na nástěnku">← Zpět na Nástěnku</a>
+      </p>
+      <div class="row align-items-center flex-column flex-md-row gap-3 gap-md-0">
+        <div class="col-12 col-md-6">
+          <img src="{$about->image}" alt="{$about->alt_text}" class="img-fluid rounded w-100" loading="lazy">
         </div>
-        <div class="col-md-6">
-          <p>{$about->content}</p>
+        <div class="col-12 col-md-6">
+          <p class="fs-5">{$about->content}</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Edit Form for About Section -->
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <h2 class="mb-4 text-center">Upravit sekci O nás</h2>
-        <div class="card">
-          <div class="card-body">
-            {control aboutForm}
+  <section class="edit-form py-4 py-md-5" aria-labelledby="edit-about-heading">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-8">
+          <h2 id="edit-about-heading" class="mb-4 text-center fs-3 fs-md-2">Upravit sekci O nás</h2>
+          <div class="card shadow-sm p-3">
+            <div class="card-body">
+                {control aboutForm}
+                <div id="image-preview" style="display: none;">
+                    <img id="image" src="" alt="Image Preview" style="max-width: 100%;">
+                    <button type="button" id="crop-button" class="btn btn-primary mt-2">Oříznout obrázek</button>
+                </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <script>
-    // Enhance form controls with Bootstrap styling after the form is rendered.
-    document.addEventListener("DOMContentLoaded", function(){
-      document.querySelectorAll(".card-body form input:not([type='hidden']), .card-body form textarea, .card-body form select")
-      .forEach(function(field){
-         field.classList.add("form-control");
-      });
-      document.querySelectorAll(".card-body form input[type='submit']")
-      .forEach(function(btn){
-         btn.classList.add("btn", "btn-primary");
-      });
-    });
-  </script>
+<script src="/js/cropper.js"></script>
 {/block}

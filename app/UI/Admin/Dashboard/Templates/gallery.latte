@@ -1,0 +1,66 @@
+{block content}
+
+{block css}
+<link rel="stylesheet" href="/css/gallery.css">
+{/block}
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<div class="dashboard-container">
+    <h1 class="text-center">Upravit galerii</h1>
+
+    <!-- Upload Form -->
+    <div class="section-card mb-4">
+        <h3 class="text-center">Nahrát nový obrázek</h3>
+        {control galleryForm}
+    </div>
+
+    <!-- Gallery Images List -->
+    <div class="section-card">
+        <h3 class="text-center">Správa obrázků</h3>
+        {if $galleryImages->count() > 0}
+            <form n:name="galleryOrderForm" id="galleryOrderForm">
+                <div class="gallery-grid" id="galleryImages">
+                    {foreach $galleryImages as $image}
+                        <div class="gallery-item" data-id="{$image->id}">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <img src="{$image->image}" class="card-img-top" alt="{$image->alt_text}" loading="lazy">
+                                <div class="card-body">
+                                    <p class="card-text"><strong>Alt text:</strong> {$image->alt_text}</p>
+                                    <p class="card-text"><strong>Pořadí:</strong> {$image->ordering}</p>
+                                    <a href="{link deleteGalleryImage, id => $image->id}" class="btn btn-danger btn-sm" 
+                                       onclick="return confirm('Opravdu chcete smazat tento obrázek?');">Smazat</a>
+                                </div>
+                            </div>
+                        </div>
+                    {/foreach}
+                </div>
+                {control galleryOrderForm}
+            </form>
+        {else}
+            <p class="text-center">Žádné obrázky v galerii.</p>
+        {/if}
+    </div>
+
+    <!-- Back to Dashboard -->
+    <div class="mt-4 text-center">
+        <a href="{link default}" class="btn btn-secondary">Zpět na nástěnku</a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const galleryImages = document.getElementById('galleryImages');
+        if (galleryImages) {
+            const sortable = Sortable.create(galleryImages, {
+                animation: 150,
+                touchStartThreshold: 10, // Improve touch sensitivity for mobile
+                handle: '.card',
+                onEnd: function (evt) {
+                    const order = sortable.toArray();
+                    document.querySelector('#galleryOrderForm input[name="order"]').value = JSON.stringify(order);
+                }
+            });
+        }
+    });
+</script>
+{/block}

@@ -62,6 +62,22 @@ final class DashboardPresenter extends Presenter
         $this->template->setFile(__DIR__ . '/Templates/hero.latte');
     }
 
+    public function renderGallery(): void
+    {
+        $this->template->galleryImages = $this->pageFacade->getGalleryImages();
+        $this->template->setFile(__DIR__ . '/Templates/gallery.latte');
+    }
+
+    /**
+     * Action to delete a gallery image.
+     */
+    public function actionDeleteGalleryImage(int $id): void
+    {
+        $this->pageFacade->deleteGalleryImage($id);
+        $this->flashMessage('Obrázek byl úspěšně odstraněn.', 'success');
+        $this->redirect('gallery');
+    }
+
     public function renderEmail(): void
     {
         $this->template->userTemplate = $this->emailFacade->getTemplateByName('usr_confirmation');
@@ -214,80 +230,105 @@ public function renderAddCourse(): void
      * @return Form
      */
 public function createComponentAddCourseForm(): Form
-{
-    $form = new Form;
-    $fields = [
-        'name' => ['type' => 'text', 'label' => 'Název kurzu:', 'required' => true],
-        'description' => ['type' => 'textArea', 'label' => 'Popis:', 'required' => true],
-        'content' => ['type' => 'textArea', 'label' => 'Podrobný obsah:', 'required' => false], // New field
-        'price' => ['type' => 'text', 'label' => 'Cena:', 'required' => true],
-        'location' => ['type' => 'text', 'label' => 'Adresa:', 'required' => true],
-        'start_date' => ['type' => 'text', 'label' => 'Datum:', 'required' => true, 'htmlType' => 'date'],
-        'start_time' => ['type' => 'text', 'label' => 'Od:', 'required' => true, 'htmlType' => 'time'],
-    ];
+    {
+        $form = new Form;
+        $fields = [
+            'name' => ['type' => 'text', 'label' => 'Název kurzu:', 'required' => true],
+            'description' => ['type' => 'textArea', 'label' => 'Popis:', 'required' => true],
+            'content' => ['type' => 'textArea', 'label' => 'Podrobný obsah:', 'required' => false],
+            'price' => ['type' => 'text', 'label' => 'Cena:', 'required' => true],
+            'location' => ['type' => 'text', 'label' => 'Adresa:', 'required' => true],
+            'start_date' => ['type' => 'text', 'label' => 'Začíná:', 'required' => false],
+            'start_time' => ['type' => 'text', 'label' => 'Od:', 'required' => false],
+        ];
 
-    $form->addUpload('image', 'Obrázek:')
-         ->setHtmlAttribute('class', 'form-control');
+        $form->addUpload('image', 'Obrázek:')
+             ->setHtmlAttribute('class', 'form-control');
 
-    foreach ($fields as $name => $config) {
-        $method = 'add' . ucfirst($config['type']);
-        $field = $form->$method($name, $config['label'] ?? '');
-        if (isset($config['htmlType'])) {
-            $field->setHtmlType($config['htmlType']);
+        foreach ($fields as $name => $config) {
+            $method = 'add' . ucfirst($config['type']);
+            $field = $form->$method($name, $config['label'] ?? '');
+            if (isset($config['htmlType'])) {
+                $field->setHtmlType($config['htmlType']);
+            }
+            if (!empty($config['required'])) {
+                $field->setRequired();
+            }
+            if ($config['type'] !== 'hidden') {
+                $field->getControlPrototype()->addClass('form-control');
+            }
         }
-        if (!empty($config['required'])) {
-            $field->setRequired();
-        }
-        if ($config['type'] !== 'hidden') {
-            $field->getControlPrototype()->addClass('form-control');
-        }
+
+        $form->addCheckbox('show_ribbon', 'Zobrazit ribbon')
+             ->setDefaultValue(true);
+
+        $byAgreement = $form->addCheckbox('by_agreement', 'Dle domluvy (bez konkrétního data a času)')
+             ->setDefaultValue(false);
+
+        // Add start_date and start_time with conditional validation
+        $startDate = $form->addText('start_date', 'Začíná:')
+             ->setHtmlAttribute('class', 'form-control')
+             ->setHtmlId('start_date');
+
+        $startTime = $form->addText('start_time', 'Od:')
+             ->setHtmlAttribute('class', 'form-control')
+             ->setHtmlId('start_time');
+
+        // Conditional validation: require start_date and start_time only if by_agreement is false
+        $byAgreement->addCondition(Form::EQUAL, false)
+            ->toggle('by-agreement-fields')
+            ->addConditionOn($startDate, Form::FILLED)
+            ->addRule(Form::FILLED, 'Začíná je povinné, pokud není vybrána možnost Dle domluvy.')
+            ->addConditionOn($startTime, Form::FILLED)
+            ->addRule(Form::FILLED, 'Od je povinné, pokud není vybrána možnost Dle domluvy.');
+
+        $form->addSubmit('save', 'Přidat kurz')
+            ->getControlPrototype()->addClass('btn btn-primary')
+            ->setAttribute('type', 'submit');
+
+        $form->onSuccess[] = function (Form $form, $values) {
+            $data = (array)$values;
+
+            try {
+                $image = $data['image'];
+                $imagePath = \App\Utils\ImageUploader::uploadImage($image, 'uploads/courses', null);
+                if (!$imagePath && $image->isOk()) {
+                    throw new \Exception('Nepodařilo se nahrát obrázek.');
+                }
+
+                // Set start_date and start_time to empty string if by_agreement is true
+                if ($data['by_agreement']) {
+                    $data['start_date'] = '';
+                    $data['start_time'] = '';
+                }
+
+                $this->pageFacade->addCourse(
+                    $data['name'],
+                    $data['description'],
+                    $data['content'],
+                    $imagePath,
+                    floatval(str_replace(',', '.', $data['price'])),
+                    $data['location'],
+                    $data['start_date'],
+                    $data['start_time'],
+                    (bool)$data['show_ribbon'],
+                    (bool)$data['by_agreement']
+                );
+
+                $this->flashMessage('Kurz byl úspěšně přidán.', 'success');
+
+            } catch (\Exception $e) {
+                $this->flashMessage('Nastala chyba při přidávání kurzu: ' . $e->getMessage(), 'danger');
+                $this->redirect('this');
+            }
+
+            $this->redirect('Dashboard:courses');
+        };
+
+        $form->getElementPrototype()->enctype = 'multipart/form-data';
+
+        return $form;
     }
-
-    $form->addCheckbox('show_ribbon', 'Zobrazit ribbon')
-         ->setDefaultValue(true);
-
-    $form->addSubmit('save', 'Přidat kurz')
-        ->getControlPrototype()->addClass('btn btn-primary')
-        ->setAttribute('type', 'submit');
-
-
-    $form->onSuccess[] = function (Form $form, $values) {
-    $data = (array)$values;
-
-    try {
-        $image = $data['image'];
-        $imagePath = \App\Utils\ImageUploader::uploadImage($image, 'uploads/courses', null);
-        if (!$imagePath && $image->isOk()) {
-            throw new \Exception('Nepodařilo se nahrát obrázek.');
-        }
-
-        $this->pageFacade->addCourse(
-            $data['name'],
-            $data['description'],
-            $data['content'],
-            $imagePath,
-            floatval(str_replace(',', '.', $data['price'])),
-            $data['location'],
-            $data['start_date'],
-            $data['start_time'],
-            (bool)$data['show_ribbon']
-        );
-
-        $this->flashMessage('Kurz byl úspěšně přidán.', 'success');
-
-    } catch (\Exception $e) {
-        $this->flashMessage('Nastala chyba při přidávání kurzu: ' . $e->getMessage(), 'danger');
-        $this->redirect('this');
-    }
-
-    $this->redirect('Dashboard:courses');
-};
-
-
-    $form->getElementPrototype()->enctype = 'multipart/form-data';
-
-    return $form;
-}
 
     /**
      * Create a form to edit an Offering.
@@ -496,7 +537,12 @@ public function createComponentAddCourseForm(): Form
      *
      * @return Form
      */
-    public function createComponentCourseForm(): Form
+/**
+     * Create a form to edit a Course.
+     *
+     * @return Form
+     */
+public function createComponentCourseForm(): Form
     {
         $id = $this->getParameter('id');
         if (!$id) {
@@ -507,13 +553,17 @@ public function createComponentAddCourseForm(): Form
             $this->error('Kurz nenalezen');
         }
         
+        $startDateDefault = $course->start_date ?? '';
+        $startTimeDefault = $course->start_time ?? '';
+
         $fields = [
             'name'        => ['type' => 'text',     'label' => 'Název kurzu:', 'required' => true],
             'description' => ['type' => 'textArea', 'label' => 'Popis:',        'required' => true],
             'content'     => ['type' => 'textArea', 'label' => 'Podrobný obsah:', 'required' => false],
             'price'       => ['type' => 'text',     'label' => 'Cena:',         'required' => true],
             'location'    => ['type' => 'text',     'label' => 'Adresa:',       'required' => true],
-            'start_date'  => ['type' => 'text',     'label' => 'Začíná:',       'required' => true, 'htmlType' => 'date'],
+            'start_date'  => ['type' => 'text',     'label' => 'Začíná:',       'required' => false, 'default' => $startDateDefault],
+            'start_time'  => ['type' => 'text',     'label' => 'Od:',           'required' => false, 'default' => $startTimeDefault],
         ];
     
         $form = $this->createEditForm(
@@ -524,6 +574,11 @@ public function createComponentAddCourseForm(): Form
                 $image = $values['image'];
                 $values['image'] = \App\Utils\ImageUploader::uploadImage($image, 'uploads/courses', $course->image);
                 $values['show_ribbon'] = $values['show_ribbon'];
+                $values['by_agreement'] = $values['by_agreement'] ?? 0; // Default to 0 if not set
+                if ($values['by_agreement']) {
+                    $values['start_date'] = '';
+                    $values['start_time'] = '';
+                }
                 $courseId = (int)$values['id'];
                 $this->pageFacade->updateCourse($courseId, (array)$values);
             },
@@ -533,10 +588,6 @@ public function createComponentAddCourseForm(): Form
     
         $form->addHidden('id')->setDefaultValue($course->id);
     
-        if ($course->start_date instanceof \DateTimeInterface) {
-            $form->getComponent('start_date');
-        }
-    
         if ($form->getComponent('image', false)) {
             $form->removeComponent($form['image']);
         }
@@ -545,6 +596,17 @@ public function createComponentAddCourseForm(): Form
     
         $form->addCheckbox('show_ribbon', 'Zobrazit ribbon')
              ->setDefaultValue($course->show_ribbon ?? true);
+    
+        $byAgreement = $form->addCheckbox('by_agreement', 'Dle domluvy (bez konkrétního data a času)')
+             ->setDefaultValue($course->by_agreement ?? false);
+    
+        // Apply conditional validation to existing start_date and start_time from $fields
+        $startDate = $form['start_date'];
+        $startTime = $form['start_time'];
+    
+        $byAgreement->addCondition(Form::EQUAL, false)
+            ->addRule(Form::FILLED, 'Začíná je povinné, pokud není vybrána možnost Dle domluvy.')
+            ->addRule(Form::FILLED, 'Od je povinné, pokud není vybrána možnost Dle domluvy.');
     
         $form->getElementPrototype()->enctype = 'multipart/form-data';
     
@@ -559,6 +621,7 @@ public function createComponentAddCourseForm(): Form
     
         return $form;
     }
+
 
     public function actionDeleteUser(int $id): void
     {
@@ -678,5 +741,80 @@ public function createComponentAddCourseForm(): Form
         ]);
         $this->flashMessage('Šablona pro administrátora byla aktualizována.', 'success');
         $this->redirect('this');
+    }
+
+    public function createComponentGalleryForm(): Form
+    {
+        $form = new Form;
+
+        $form->addUpload('image', 'Obrázek:')
+             ->setRequired('Vyberte obrázek.')
+             ->addRule(Form::IMAGE, 'Soubor musí být obrázek (JPEG, PNG, GIF, WebP).')
+             ->setHtmlAttribute('class', 'form-control');
+
+        $form->addText('alt_text', 'Alternativní text:')
+             ->setRequired('Zadejte alternativní text.')
+             ->setHtmlAttribute('class', 'form-control');
+
+        $form->addText('ordering', 'Pořadí:')
+             ->setRequired('Zadejte pořadí.')
+             ->setHtmlType('number')
+             ->setHtmlAttribute('class', 'form-control');
+
+        $form->addSubmit('save', 'Nahrát obrázek')
+             ->getControlPrototype()->addClass('btn btn-primary');
+
+        $form->onSuccess[] = function (Form $form, $values) {
+            try {
+                $image = $values->image;
+                $imagePath = \App\Utils\ImageUploader::uploadImage($image, 'Uploads/gallery', null);
+                if (!$imagePath && $image->isOk()) {
+                    throw new \Exception('Nepodařilo se nahrát obrázek.');
+                }
+
+                $this->pageFacade->addGalleryImage(
+                    $imagePath,
+                    $values->alt_text,
+                    (int)$values->ordering
+                );
+
+                $this->flashMessage('Obrázek byl úspěšně nahrán.', 'success');
+            } catch (\Exception $e) {
+                $this->flashMessage('Nastala chyba při nahrávání obrázku: ' . $e->getMessage(), 'danger');
+            }
+
+            $this->redirect('gallery');
+        };
+
+        $form->getElementPrototype()->enctype = 'multipart/form-data';
+
+        return $form;
+    }
+
+        public function createComponentGalleryOrderForm(): Form
+    {
+        $form = new Form;
+
+        $form->addHidden('order')
+             ->setRequired('Pořadí obrázků není definováno.');
+
+        $form->addSubmit('save', 'Uložit pořadí')
+             ->getControlPrototype()->addClass('btn btn-primary');
+
+        $form->onSuccess[] = function (Form $form, $values) {
+            try {
+                $order = json_decode($values->order, true);
+                if (!is_array($order)) {
+                    throw new \Exception('Neplatné pořadí obrázků.');
+                }
+                $this->pageFacade->updateGalleryOrder($order);
+                $this->flashMessage('Pořadí obrázků bylo úspěšně aktualizováno.', 'success');
+            } catch (\Exception $e) {
+                $this->flashMessage('Nastala chyba při ukládání pořadí: ' . $e->getMessage(), 'danger');
+            }
+            $this->redirect('gallery');
+        };
+
+        return $form;
     }
 }

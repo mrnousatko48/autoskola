@@ -61,49 +61,39 @@ class MailSender
     }
 
     private function createUserConfirmationEmail(
-        string $userEmail,
-        string $name,
-        string $courseName,
-        string $courseLocation,
-        string $courseStartDate
-    ): Message {
-        $latte = new Engine();
-        $template = $this->EmailFacade->getTemplateByName('usr_confirmation');
-        if (!$template) {
-            throw new \Exception('Šablona usr_confirmation nebyla nalezena v databázi.');
-        }
-        
-        $params = [
-            'name' => $name,
-            'courseName' => $courseName,
-            'courseLocation' => $courseLocation,
-            'adminPhone' => $template['admin_phone'] ?? 'Není zadán telefon',
-            'courseStartDate' => $courseStartDate,
-        ];
-        
-        $latte->setLoader(new \Latte\Loaders\StringLoader());
-        $subject = $latte->renderToString($template['subject'], $params);
-        $html = $latte->renderToString($template['body'], $params);
-        
-        $mail = new Message;
-        $mail->setFrom('burdadko.cczz@seznam.cz')
-             ->addTo($userEmail)
-             ->setSubject($subject)
-             ->setHtmlBody($html);
-        
-        // Přidání PDF příloh z databáze
-        $baseDir = realpath(__DIR__ . '/../../web'); // Od MailSender do www
-        foreach ($template['pdf_paths'] as $pdfPath) {
-            $fullPath = $baseDir . $pdfPath;
-            if (file_exists($fullPath)) {
-                $mail->addAttachment(basename($pdfPath), file_get_contents($fullPath), mime_content_type($fullPath));
-            } else {
-                \Tracy\Debugger::log("PDF soubor nenalezen: $fullPath");
-            }
-        }
-        
-        return $mail;
+    string $userEmail,
+    string $name,
+    string $courseName,
+    string $courseLocation,
+    string $courseStartDate
+): Message {
+    $latte = new Engine();
+    $template = $this->EmailFacade->getTemplateByName('usr_confirmation');
+    if (!$template) {
+        throw new \Exception('Šablona usr_confirmation nebyla nalezena v databázi.');
     }
+    
+    $params = [
+        'name' => $name,
+        'courseName' => $courseName,
+        'courseLocation' => $courseLocation,
+        'adminPhone' => $template['admin_phone'] ?? 'Není zadán telefon',
+        'courseStartDate' => $courseStartDate,
+    ];
+    
+    $latte->setLoader(new \Latte\Loaders\StringLoader());
+    $subject = $latte->renderToString($template['subject'], $params);
+    $html = $latte->renderToString($template['body'], $params);
+    
+    $mail = new Message;
+    $mail->setFrom('burdadko.cczz@seznam.cz')
+         ->addTo($userEmail)
+         ->setSubject($subject)
+         ->setHtmlBody($html);
+
+    return $mail;
+}
+
 
     public function sendRegistrationEmail(
         string $userEmail,

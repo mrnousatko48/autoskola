@@ -1,56 +1,59 @@
 {block content}
-  <div class="container mt-5">
-    <h1>Správci</h1>
-    <p class="lead">Zde můžete spravovat uživatele aplikace.</p>
-    <p class="mt-3 text-center">
-      <a n:href=":Front:Sign:up" class="btn btn-secondary">Přidat správce</a>
-      <a href="{link Dashboard:default}" class="btn btn-secondary">← Zpět na Nástěnku</a>
+<section class="users py-4 py-md-5" aria-labelledby="users-heading">
+  <div class="container">
+    <h1 id="users-heading" class="mb-4 text-center fs-3 fs-md-2">Správci</h1>
+    <p class="lead fs-5 text-center">Zde můžete spravovat uživatele aplikace.</p>
+    <p class="mt-3 text-center d-flex flex-column flex-md-row gap-2 justify-content-center">
+      <a n:href=":Front:Sign:up" class="btn btn-secondary btn-lg w-100 w-md-auto" aria-label="Přidat správce">Přidat správce</a>
+      <a href="{link Dashboard:default}" class="btn btn-secondary btn-lg w-100 w-md-auto" aria-label="Zpět na nástěnku">← Zpět na Nástěnku</a>
     </p>
 
     {if $presenter->getParameter('id')}
-      <div class="card mb-4">
+      <div class="card shadow-sm p-3 mb-4">
         <div class="card-header bg-primary text-white">
-          <h3 class="mb-0">Úprava uživatele</h3>
+          <h3 class="mb-0 fs-3 fs-md-2">Úprava uživatele</h3>
         </div>
         <div class="card-body">
           {control editUserForm}
         </div>
-        <div class="card-footer text-end">
-          <a href="{link Dashboard:user}" class="btn btn-secondary">Zrušit</a>
+        <div class="card-footer text-center text-md-end">
+          <a href="{link Dashboard:user}" class="btn btn-secondary btn-lg w-100 w-md-auto" aria-label="Zrušit úpravu uživatele">Zrušit</a>
         </div>
       </div>
     {/if}
 
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Uživatelské jméno</th>
-          <th>Role</th>
-          <th class="text-center">Akce</th>
-        </tr>
-      </thead>
-      <tbody>
-        {foreach $userData as $userItem}
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover">
+        <thead>
           <tr>
-            <td scope="row">{$userItem->id}</td>
-            <td>{$userItem->username}</td>
-            <td>{$userItem->role}</td>
-            <td class="text-center">
-              {* Check if the logged-in user can delete this account *}
-              {if $presenter->user->getIdentity()->id !== $userItem->id}
-                {if $presenter->user->getIdentity()->role === 'admin' || ($presenter->user->getIdentity()->role === 'pomocnik' && $userItem->role !== 'admin')}
-                  <a href="{link Dashboard:deleteUser, id => $userItem->id}" class="btn btn-sm btn-danger" onclick="return confirm('Opravdu chcete odstranit tohoto uživatele?');">Smazat</a>
-                {else}
-                  <span>Nemáte Práva</span>
-                {/if}
-              {else}
-                <span>Není k dispozici</span>
-              {/if}
-            </td>
+            <th scope="col">ID</th>
+            <th scope="col">Uživatelské jméno</th>
+            <th scope="col">Role</th>
+            <th scope="col" class="text-center">Akce</th>
           </tr>
-        {/foreach}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {foreach $userData as $userItem}
+            <tr>
+              <td scope="row" class="fs-5">{$userItem->id}</td>
+              <td class="fs-5">{$userItem->username}</td>
+              <td class="fs-5">{$userItem->role}</td>
+              <td class="text-center">
+                {if $presenter->user->getIdentity()->id !== $userItem->id}
+                  {if $presenter->user->getIdentity()->role === 'admin' || ($presenter->user->getIdentity()->role === 'pomocnik' && $userItem->role !== 'admin')}
+                    <a href="{link Dashboard:deleteUser, id => $userItem->id}" class="btn btn-danger btn-md w-100" onclick="return confirm('Opravdu chcete odstranit tohoto uživatele?');" aria-label="Smazat uživatele {$userItem->username}">Smazat</a>
+                  {else}
+                    <span class="fs-5">Nemáte práva</span>
+                  {/if}
+                {else}
+                  <span class="fs-5">Není k dispozici</span>
+                {/if}
+              </td>
+            </tr>
+          {/foreach}
+        </tbody>
+      </table>
+    </div>
   </div>
+</section>
 {/block}

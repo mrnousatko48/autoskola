@@ -12,26 +12,28 @@
 </head>
 <body>
   <!-- Contact Preview Section -->
-  <section id="contact-preview" class="py-5">
+  <section id="contact-preview" class="py-4 py-md-5" aria-labelledby="contact-heading">
     <div class="container">
-      <h2 class="text-center mb-4">Kontaktní informace</h2>
-       <p class="mt-3 text-center">
-          <a href="{link Dashboard:default}" class="btn btn-secondary">← Zpět na Nástěnku</a>
-        </p>
-      <div class="row">
-        <div class="col-md-6 mb-4">
-          <div class="p-4 bg-light rounded">
-            <p><strong>Jméno:</strong> {$contact->name}</p>
-            <p><strong>Adresa:</strong> {$contact->address}</p>
-            <p><strong>IČO:</strong> {$contact->ico}</p>
-            <p><strong>Telefon:</strong> {$contact->phone}</p>
-            <p><strong>Email:</strong> {$contact->email}</p>
+      <h2 id="contact-heading" class="text-center mb-4 fs-3 fs-md-2">Kontaktní informace</h2>
+      <p class="mt-3 text-center">
+        <a href="{link Dashboard:default}" class="btn btn-secondary btn-lg w-100 w-md-auto" aria-label="Zpět na nástěnku">← Zpět na Nástěnku</a>
+      </p>
+      <div class="row flex-column flex-md-row gap-3 gap-md-0">
+        <div class="col-12 col-md-6 mb-3 mb-md-4">
+          <div class="p-3 bg-light rounded shadow-sm">
+            <p class="fs-5"><strong>Jméno:</strong> {$contact->name}</p>
+            <p class="fs-5"><strong>Adresa:</strong> {$contact->address}</p>
+            <p class="fs-5"><strong>IČO:</strong> {$contact->ico}</p>
+            <p class="fs-5"><strong>Telefon:</strong> {$contact->phone}</p>
+            <p class="fs-5"><strong>Email:</strong> {$contact->email}</p>
           </div>
         </div>
-        <div class="col-md-6 mb-4">
-          <div class="p-4 bg-light rounded">
-            <p><strong>Vložení mapy:</strong></p>
-            {$contact->map_embed|noescape}
+        <div class="col-12 col-md-6 mb-3 mb-md-4">
+          <div class="p-3 bg-light rounded shadow-sm">
+            <p class="fs-5"><strong>Vložení mapy:</strong></p>
+            <div class="ratio ratio-16x9">
+              {$contact->map_embed|noescape}
+            </div>
           </div>
         </div>
       </div>
@@ -39,31 +41,19 @@
   </section>
 
   <!-- Edit Form for Contact Section -->
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <h2 class="mb-4 text-center">Upravit kontaktní informace</h2>
-        <div class="card">
-          <div class="card-body">
-            {control contactForm}
+  <section class="edit-form py-4 py-md-5" aria-labelledby="edit-contact-heading">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-8">
+          <h2 id="edit-contact-heading" class="mb-4 text-center fs-3 fs-md-2">Upravit kontaktní informace</h2>
+          <div class="card shadow-sm p-3">
+            <div class="card-body">
+              {control contactForm}
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-
-  <script>
-    // Enhance form controls with Bootstrap styling after the form is rendered.
-    document.addEventListener("DOMContentLoaded", function(){
-      document.querySelectorAll(".card-body form input:not([type='hidden']), .card-body form textarea, .card-body form select")
-      .forEach(function(field){
-         field.classList.add("form-control");
-      });
-      document.querySelectorAll(".card-body form input[type='submit']")
-      .forEach(function(btn){
-         btn.classList.add("btn", "btn-primary");
-      });
-    });
-  </script>
+  </section>
 </body>
 </html>

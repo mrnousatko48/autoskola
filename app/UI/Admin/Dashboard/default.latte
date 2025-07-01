@@ -1,8 +1,10 @@
 {block content}
-<link rel="stylesheet" href="/css/dash.css">
+    {block css}
+    <link rel="stylesheet" href="/css/dash.css">
+    {/block}
+
 <div class="dashboard-container">
   <h1>Administrátorská nástěnka</h1>
-  <p>Vyberte sekci k úpravě:</p>
 
   <div class="dashboard-menu">
     <!-- Sekce: Registrace & správci -->
@@ -23,6 +25,7 @@
         <a href="{link Dashboard:contact}" class="btn btn-primary">Upravit kontaktní informace</a>
         <a href="{link Dashboard:advantages}" class="btn btn-primary">Upravit výhody</a>
         <a href="{link Dashboard:offerings}" class="btn btn-primary">Upravit nabídky</a>
+        <a href="{link Dashboard:gallery}" class="btn btn-primary">Upravit galerii</a>
       </div>
     </div>
 
@@ -37,7 +40,7 @@
 
     <!-- Sekce: Notifikace -->
     <div class="section-card">
-      <h3>Notifikace</h3>
+      <h3>Notifikace a Dokumenty</h3>
       <div class="button-group">
         <a href="{link Dashboard:email}" class="btn btn-primary">Upravit emailové šablony</a>
       </div>

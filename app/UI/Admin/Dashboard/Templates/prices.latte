@@ -1,55 +1,73 @@
 {block content}
-  <div class="container mt-5">
-    {if isset($price)}
-      <h1 class="mb-4 text-center">Upravit cenu</h1>
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <div class="card">
-            <div class="card-body">
-              {control priceForm}
+<section class="prices py-4 py-md-5" aria-labelledby="prices-heading">
+    <div class="container">
+        {if isset($price)}
+            <!-- Edit Price Form -->
+            <h1 id="prices-heading" class="mb-4 text-center fs-3 fs-md-2">Upravit cenu</h1>
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-8">
+                    <div class="card shadow-sm p-3">
+                        <div class="card-body">
+                            {control priceForm}
+                        </div>
+                    </div>
+                    <p class="mt-3 text-center">
+                        <a href="{link Dashboard:prices}" class="btn btn-secondary btn-lg w-100 w-md-auto" aria-label="Zpět na ceník">← Zpět na ceník</a>
+                    </p>
+                </div>
             </div>
-          </div>
-          <p class="mt-3 text-center">
-            <a href="{link Dashboard:prices}" class="btn btn-secondary">← Zpět na ceník</a>
-          </p>
-        </div>
-      </div>
-    {else}
-      <h1 class="mb-4 text-center">Ceny kurzů</h1>
-      <p class="text-center">
-        <a href="{link Dashboard:default}" class="btn btn-secondary">← Zpět na Nástěnku</a>
-      </p>
-      {var $headers = [
-        'public'       => 'Cena pro veřejnost a studenty',
-        'card'         => 'Platba kartou',
-        'installments' => 'Splátky',
-        'other'        => 'Ostatní poplatky'
-      ]}
-      {foreach $groupedPrices as $section => $prices}
-        <h2 class="mt-4">{$headers[$section] ?? $section}</h2>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Položka</th>
-              <th>Cena</th>
-              <th>Popis</th>
-              <th>Upravit</th>
-            </tr>
-          </thead>
-          <tbody>
-            {foreach $prices as $p}
-              <tr>
-                <td>{$p->item}</td>
-                <td>{$p->price}</td>
-                <td>{$p->description}</td>
-                <td>
-                  <a href="{link Dashboard:prices, id => $p->id}" class="btn btn-sm btn-primary">Upravit</a>
-                </td>
-              </tr>
+        {else}
+            <!-- Prices List View -->
+            <h1 id="prices-heading" class="mb-4 text-center fs-3 fs-md-2">Ceny kurzů</h1>
+            <p class="text-center mb-4">
+                <a href="{link Dashboard:default}" class="btn btn-secondary btn-lg w-100 w-md-auto" aria-label="Zpět na nástěnku">← Zpět na Nástěnku</a>
+            </p>
+            {var $headers = [
+                'public'       => 'Cena pro veřejnost a studenty',
+                'card'         => 'Platba kartou',
+                'installments' => 'Splátky',
+                'other'        => 'Ostatní poplatky'
+            ]}
+            {foreach $groupedPrices as $section => $prices}
+                <h2 class="mt-4 fs-4 fs-md-3">{$headers[$section] ?? $section}</h2>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Položka</th>
+                                <th scope="col">Cena</th>
+                                <th scope="col" class="d-none d-md-table-cell">Popis</th>
+                                <th scope="col">Akce</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {foreach $prices as $p}
+                                <tr>
+                                    <td class="fs-5">{$p->item}</td>
+                                    <td class="fs-5">{$p->price}</td>
+                                    <td class="fs-5 d-none d-md-table-cell">{$p->description}</td>
+                                    <td>
+                                        <a href="{link Dashboard:prices, id => $p->id}" class="btn btn-primary btn-md w-100" aria-label="Upravit cenu {$p->item}">Upravit</a>
+                                    </td>
+                                </tr>
+                            {/foreach}
+                        </tbody>
+                    </table>
+                </div>
             {/foreach}
-          </tbody>
-        </table>
-      {/foreach}
-    {/if}
-  </div>
+        {/if}
+    </div>
+</section>
+
+<style n:syntax="double">
+    @media (max-width: 767px) {
+        .table-responsive {
+            font-size: 0.9rem;
+        }
+        .btn-md {
+            padding: 0.5rem;
+            font-size: 1rem;
+        }
+    }
+</style>
 {/block}

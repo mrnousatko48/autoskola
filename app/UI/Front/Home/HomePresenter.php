@@ -29,27 +29,27 @@ final class HomePresenter extends Nette\Application\UI\Presenter
 
         // Format start date and time for the course detail view
         if ($this->course) {
-            // Handle start_date
-            $startDate = $this->course->start_date instanceof \DateTimeInterface
-                ? $this->course->start_date->format('d.m.Y')
-                : $this->course->start_date;
-
-            // Handle start_time, accounting for possible DateInterval or other types
-            $startTime = $this->course->start_time;
-            if ($startTime instanceof \DateInterval) {
-                // Convert DateInterval to HH:MM (e.g., PT2H30M -> "02:30")
-                $hours = $startTime->h;
-                $minutes = $startTime->i;
-                $startTime = sprintf('%02d:%02d', $hours, $minutes);
-            } elseif (is_string($startTime)) {
-                // Trim to HH:MM if it’s a string like "14:30:00"
-                $startTime = substr($startTime, 0, 5);
+            if ($this->course->by_agreement || empty($this->course->start_date) || empty($this->course->start_time)) {
+                $this->template->formattedStart = 'dle domluvy';
             } else {
-                // Fallback if unexpected type
-                $startTime = 'Není zadán čas';
-            }
+                // Handle start_date as a string (e.g., '2025-07-01')
+                $startDate = $this->course->start_date;
+                if (!empty($startDate) && is_string($startDate)) {
+                    $startDate = date('d.m.Y', strtotime($startDate));
+                } else {
+                    $startDate = 'Není zadán datum';
+                }
 
-            $this->template->formattedStart = "$startDate od {$startTime}h";
+                // Handle start_time as a string (e.g., '19:54:00')
+                $startTime = $this->course->start_time;
+                if (!empty($startTime) && is_string($startTime)) {
+                    $startTime = substr($startTime, 0, 5); // Extract HH:MM
+                } else {
+                    $startTime = 'Není zadán čas';
+                }
+
+                $this->template->formattedStart = "$startDate od {$startTime}h";
+            }
         }
     }
 
@@ -62,6 +62,11 @@ final class HomePresenter extends Nette\Application\UI\Presenter
         $this->template->contact = $this->pageFacade->getContactInfo();
         $this->template->groupedPrices = $this->pageFacade->getGroupedCoursePrices();
         $this->template->courses = $this->pageFacade->getAllCourses();
+    }
+
+    public function renderGallery(): void
+    {
+        $this->template->galleryImages = $this->pageFacade->getGalleryImages();
     }
 
     public function renderCenik(): void
@@ -121,15 +126,17 @@ final class HomePresenter extends Nette\Application\UI\Presenter
 
             $this->EmailFacade->createRegistration($registrationData);
 
-            $courseStartDate = 'Není zadán datum';
-            if ($this->course->start_date instanceof \DateTimeInterface) {
-                $courseStartDate = $this->course->start_date->format('d.m.Y');
-                // Handle start_time for email
-                $startTime = $this->course->start_time;
-                if ($startTime instanceof \DateInterval) {
-                    $startTime = sprintf('%02d:%02d', $startTime->h, $startTime->i);
-                } elseif (is_string($startTime)) {
-                    $startTime = substr($startTime, 0, 5);
+            // Format start date and time for the email
+            if ($this->course->by_agreement || empty($this->course->start_date) || empty($this->course->start_time)) {
+                $courseStartDate = 'dle domluvy';
+            } else {
+                $courseStartDate = 'Není zadán datum';
+                if (!empty($this->course->start_date) && is_string($this->course->start_date)) {
+                    $courseStartDate = date('d.m.Y', strtotime($this->course->start_date));
+                }
+                $startTime = 'Není zadán čas';
+                if (!empty($this->course->start_time) && is_string($this->course->start_time)) {
+                    $startTime = substr($this->course->start_time, 0, 5); // Extract HH:MM
                 }
                 $courseStartDate .= " od {$startTime}h";
             }
@@ -141,7 +148,7 @@ final class HomePresenter extends Nette\Application\UI\Presenter
                 $data->address,
                 $this->course->location,
                 $data->phone,
-                date('d.m.Y H:i'),
+                date('d.m.Y H:i'), // Current date and time: 01.07.2025 21:07
                 $courseStartDate
             );
 

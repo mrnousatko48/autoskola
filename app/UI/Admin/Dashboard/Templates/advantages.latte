@@ -1,44 +1,48 @@
 {block content}
-  <div class="container mt-5">
-    {if $presenter->getParameter('id')}
-      <div class="card">
-        <div class="card-header bg-primary text-white">
-          <h3 class="mb-0">Upravit výhodu</h3>
+  <section class="advantages py-4 py-md-5" aria-labelledby="advantages-heading">
+    <div class="container">
+      {if $presenter->getParameter('id')}
+        <!-- Edit Advantage Form -->
+        <div class="card shadow-sm p-3">
+          <div class="card-header bg-primary text-white">
+            <h3 id="edit-advantage-heading" class="mb-0 fs-3 fs-md-2">Upravit výhodu</h3>
+          </div>
+          <div class="card-body">
+            {control advantageForm}
+          </div>
+          <div class="card-footer text-center text-md-end">
+            <a href="{link Dashboard:advantages}" class="btn btn-secondary btn-lg w-100 w-md-auto" aria-label="Zpět na seznam výhod">← Zpět na seznam výhod</a>
+          </div>
         </div>
-        <div class="card-body">
-          {control advantageForm}
+      {else}
+        <!-- Advantages List -->
+        <h1 id="advantages-heading" class="text-center mb-4 fs-3 fs-md-2">Výhody</h1>
+        <p class="mb-4 text-center">
+          <a href="{link Dashboard:default}" class="btn btn-secondary btn-lg w-100 w-md-auto" aria-label="Zpět na nástěnku">← Zpět na Nástěnku</a>
+        </p>
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Název</th>
+                <th scope="col">Popis</th>
+                <th scope="col">Upravit</th>
+              </tr>
+            </thead>
+            <tbody>
+              {foreach $advantages as $adv}
+                <tr>
+                  <td class="fs-5">{$adv->title}</td>
+                  <td class="fs-5">{$adv->description}</td>
+                  <td>
+                    <a href="{link Dashboard:advantages, id => $adv->id}" class="btn btn-primary btn-md w-100" aria-label="Upravit výhodu {$adv->title}">Upravit</a>
+                  </td>
+                </tr>
+              {/foreach}
+            </tbody>
+          </table>
         </div>
-        <div class="card-footer text-end">
-          <a href="{link Dashboard:advantages}" class="btn btn-secondary">← Zpět na seznam výhod</a>
-        </div>
-      </div>
-    {else}
-      <h1>Výhody</h1>
-      <p>
-      <a href="{link Dashboard:default}" class="btn btn-secondary">← Zpět na Nástěnku</a>
-      <!-- Volitelně zde můžete přidat tlačítko "Nová výhoda" -->
-      </p>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Název</th>
-            <th>Popis</th>
-            <th>Upravit</th>
-          </tr>
-        </thead>
-        <tbody>
-          {foreach $advantages as $adv}
-            <tr>
-              <td>{$adv->title}</td>
-              <td>{$adv->description}</td>
-              <td>
-                <!-- Tento odkaz nastaví parametr id, aby šablona přešla do režimu úprav -->
-                <a href="{link Dashboard:advantages, id => $adv->id}" class="btn btn-sm btn-primary">Upravit</a>
-              </td>
-            </tr>
-          {/foreach}
-        </tbody>
-      </table>
-    {/if}
-  </div>
+      {/if}
+    </div>
+  </section>
 {/block}
